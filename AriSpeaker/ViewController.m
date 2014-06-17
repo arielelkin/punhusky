@@ -46,6 +46,10 @@
     UIButton *rapidFireButton;
 
     UIDynamicAnimator *animator;
+
+    UIView *labelView;
+    UILabel *jokeLabel;
+    UILabel *punchlineLabel;
 }
 
 - (void)viewDidLoad
@@ -57,16 +61,51 @@
 
     jokeTellerImageView = [UIImageView new];
     [jokeTellerImageView setTranslatesAutoresizingMaskIntoConstraints:NO];
-
-    [self.view addSubview:jokeTellerImageView];
     [jokeTellerImageView setContentMode:UIViewContentModeScaleAspectFit];
     [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyAsks.jpg"]];
+    [self.view addSubview:jokeTellerImageView];
 
     NSArray *jokeTellerImageViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[image]|" options:0 metrics:nil views:@{@"image": jokeTellerImageView}];
     [self.view addConstraints:jokeTellerImageViewConstraints];
 
     jokeTellerImageViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[image]|" options:0 metrics:nil views:@{@"image": jokeTellerImageView}];
     [self.view addConstraints:jokeTellerImageViewConstraints];
+
+    labelView = [UIView new];
+    [labelView setAlpha:0];
+    [labelView setBackgroundColor:[UIColor whiteColor]];
+    labelView.layer.cornerRadius = 10;
+    [labelView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.view addSubview:labelView];
+
+    jokeLabel = [UILabel new];
+    [jokeLabel setNumberOfLines:0];
+    [jokeLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:20]];
+    [jokeLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [labelView addSubview:jokeLabel];
+
+    punchlineLabel = [UILabel new];
+    [punchlineLabel setNumberOfLines:0];
+    [punchlineLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:20]];
+    [punchlineLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [labelView addSubview:punchlineLabel];
+
+    NSDictionary *viewsDicts = NSDictionaryOfVariableBindings(labelView, jokeLabel, punchlineLabel);
+
+    NSArray *labelViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[labelView]|" options:0 metrics:nil views:viewsDicts];
+    [self.view addConstraints:labelViewConstraints];
+
+    labelViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[labelView(200)]" options:0 metrics:nil views:viewsDicts];
+    [self.view addConstraints:labelViewConstraints];
+
+    NSArray *jokeLabelConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[jokeLabel]-|" options:0 metrics:nil views:viewsDicts];
+    [labelView addConstraints:jokeLabelConstraints];
+
+    NSArray *punchlineLabelConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[punchlineLabel]-|" options:0 metrics:nil views:viewsDicts];
+    [labelView addConstraints:punchlineLabelConstraints];
+
+    NSArray *labelConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[jokeLabel]-[punchlineLabel]" options:0 metrics:nil views:viewsDicts];
+    [labelView addConstraints:labelConstraintsV];
 
     rapidFireButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rapidFireButton setImage:[UIImage imageNamed:@"rapidfire_on"] forState:UIControlStateNormal];
@@ -82,6 +121,21 @@
     [self.view addConstraints:buttonConstraintsV];
 
     isRapidFire = YES;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self toggleLabels];
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self toggleLabels];
+}
+
+- (void)toggleLabels {
+    if (labelView.alpha == 0) {
+        labelView.alpha = 0.7;
+    }
+    else labelView.alpha = 0;
 }
 
 - (void)changeState {
@@ -137,7 +191,12 @@
                     NSString *answer = post[@"data"][@"selftext"];
                     [posts addObject:[Joke jokeWithQuestion:question answer:answer]];
                 }
-                if (isRapidFire) [self sayNextLine];
+                if (isRapidFire) {
+                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                        [self sayNextLine];
+                    }];
+
+                }
             }
             else NSLog(@"JSON parsing Error: %@", jsonParsingError);
         }
@@ -162,10 +221,12 @@
     if (!askedQuestion) {
         line = [joke question];
         [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyAsks.jpg"]];
+        [jokeLabel setText:line];
     }
     else {
         line = [joke answer];
         [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyTells.jpg"]];
+        [punchlineLabel setText:line];
 
         if (currentJoke == posts.count) {
             line = @"OK, I'm done";
@@ -194,6 +255,8 @@
 
     [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyLaughs.jpg"]];
 
+    [jokeLabel setText:@"Mwahahahaahahahahaha"];
+    [punchlineLabel setText:@" "];
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance *)lastUtterance {
