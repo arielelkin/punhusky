@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B0C2152819495EF1005AF301 /* rapidfire_off.png in Resources */ = {isa = PBXBuildFile; fileRef = B0C2152619495EF1005AF301 /* rapidfire_off.png */; };
+		B0C2152919495EF1005AF301 /* rapidfire_on.png in Resources */ = {isa = PBXBuildFile; fileRef = B0C2152719495EF1005AF301 /* rapidfire_on.png */; };
 		B0E56B6818EEFE7E002A8C89 /* HuskyAsks.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0E56B6518EEFE7E002A8C89 /* HuskyAsks.jpg */; };
 		B0E56B6918EEFE7E002A8C89 /* HuskyLaughs.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0E56B6618EEFE7E002A8C89 /* HuskyLaughs.jpg */; };
 		B0E56B6A18EEFE7E002A8C89 /* HuskyTells.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0E56B6718EEFE7E002A8C89 /* HuskyTells.jpg */; };
@@ -37,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B0C2152619495EF1005AF301 /* rapidfire_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = rapidfire_off.png; path = Images/rapidfire_off.png; sourceTree = SOURCE_ROOT; };
+		B0C2152719495EF1005AF301 /* rapidfire_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = rapidfire_on.png; path = Images/rapidfire_on.png; sourceTree = SOURCE_ROOT; };
 		B0E56B6518EEFE7E002A8C89 /* HuskyAsks.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = HuskyAsks.jpg; path = Images/HuskyAsks.jpg; sourceTree = SOURCE_ROOT; };
 		B0E56B6618EEFE7E002A8C89 /* HuskyLaughs.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = HuskyLaughs.jpg; path = Images/HuskyLaughs.jpg; sourceTree = SOURCE_ROOT; };
 		B0E56B6718EEFE7E002A8C89 /* HuskyTells.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = HuskyTells.jpg; path = Images/HuskyTells.jpg; sourceTree = SOURCE_ROOT; };
@@ -88,6 +92,8 @@
 		B0E56B6B18EEFE82002A8C89 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				B0C2152619495EF1005AF301 /* rapidfire_off.png */,
+				B0C2152719495EF1005AF301 /* rapidfire_on.png */,
 				B0E56B6518EEFE7E002A8C89 /* HuskyAsks.jpg */,
 				B0E56B6618EEFE7E002A8C89 /* HuskyLaughs.jpg */,
 				B0E56B6718EEFE7E002A8C89 /* HuskyTells.jpg */,
@@ -247,8 +253,10 @@
 			files = (
 				B0E56B6918EEFE7E002A8C89 /* HuskyLaughs.jpg in Resources */,
 				E817F4DE1886A69B004CB5A9 /* Images.xcassets in Resources */,
+				B0C2152819495EF1005AF301 /* rapidfire_off.png in Resources */,
 				E817F4D01886A69B004CB5A9 /* InfoPlist.strings in Resources */,
 				B0E56B6818EEFE7E002A8C89 /* HuskyAsks.jpg in Resources */,
+				B0C2152919495EF1005AF301 /* rapidfire_on.png in Resources */,
 				E817F4D91886A69B004CB5A9 /* Main.storyboard in Resources */,
 				B0E56B6A18EEFE7E002A8C89 /* HuskyTells.jpg in Resources */,
 			);
