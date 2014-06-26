@@ -11,6 +11,13 @@
 
 @import AVFoundation;
 
+typedef NS_ENUM(NSUInteger, JokeEngineState){
+    JokeEngineStateIdle,
+    JokeEngineStateSetup,
+    JokeEngineStatePunchline,
+    JokeEngineStateLaughing
+};
+
 @interface ViewController ()<AVSpeechSynthesizerDelegate>
 @end
 
@@ -32,6 +39,8 @@
     UIView *labelView;
     UILabel *jokeLabel;
     UILabel *punchlineLabel;
+
+    JokeEngineState jokeEngineState;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -44,43 +53,36 @@
     [self buildUI];
     [self fetchJokes];
 
+    jokeEngineState = JokeEngineStateSetup;
+
     isRapidFire = YES;
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-}
 
 - (void)buildUI {
 
     jokeTellerImageView = [UIImageView new];
-    [jokeTellerImageView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    jokeTellerImageView.frame = self.view.frame;
     [jokeTellerImageView setContentMode:UIViewContentModeScaleAspectFit];
     [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyAsks.jpg"]];
     [self.view addSubview:jokeTellerImageView];
 
-    NSArray *jokeTellerImageViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[image]|" options:0 metrics:nil views:@{@"image": jokeTellerImageView}];
-    [self.view addConstraints:jokeTellerImageViewConstraints];
-
-    jokeTellerImageViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[image]|" options:0 metrics:nil views:@{@"image": jokeTellerImageView}];
-    [self.view addConstraints:jokeTellerImageViewConstraints];
-
     labelView = [UIView new];
     [labelView setAlpha:0];
-    [labelView setBackgroundColor:[UIColor whiteColor]];
+    [labelView setBackgroundColor:[UIColor clearColor]];
     labelView.layer.cornerRadius = 10;
     [labelView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.view addSubview:labelView];
 
     jokeLabel = [UILabel new];
     [jokeLabel setNumberOfLines:0];
-    [jokeLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:20]];
+    [jokeLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:30]];
     [jokeLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [labelView addSubview:jokeLabel];
 
     punchlineLabel = [UILabel new];
     [punchlineLabel setNumberOfLines:0];
-    [punchlineLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:20]];
+    [punchlineLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:30]];
     [punchlineLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [labelView addSubview:punchlineLabel];
 
@@ -100,43 +102,93 @@
 
     NSArray *labelConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[jokeLabel]-[punchlineLabel]" options:0 metrics:nil views:viewsDicts];
     [labelView addConstraints:labelConstraintsV];
+
+    UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)];
+    [self.view addGestureRecognizer:tapGesture];
+
+    UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
+    [self.view addGestureRecognizer:panGesture];
 }
 
+- (void)panGesture:(UIPanGestureRecognizer *)gestureRecognizer {
 
-#pragma mark -
-#pragma mark Touches
+    CGFloat xTranslation = [gestureRecognizer translationInView:self.view].x;
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self toggleLabels];
+    jokeTellerImageView.transform = CGAffineTransformRotate(jokeTellerImageView.transform, M_PI/(xTranslation-10));
+
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+        [UIView animateWithDuration:((double)(20 + arc4random()%60)/100.0)
+                              delay:0
+             usingSpringWithDamping:0.2
+              initialSpringVelocity:0
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:^{
+                             jokeTellerImageView.transform = CGAffineTransformMakeScale(1.8, 1.6);
+                         }
+                         completion:nil
+         ];
+
+        [punchlineLabel setText:@" "];
+    }
+
+    if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+
+        [UIView animateWithDuration:((double)(20 + arc4random()%40)/100.0)
+                              delay:0
+             usingSpringWithDamping:0.4
+              initialSpringVelocity:0
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:^{
+                             jokeTellerImageView.transform = CGAffineTransformIdentity;
+                         }
+                         completion:nil
+         ];
+
+        if (fabs(xTranslation) < 5) return;
+
+        CGPoint velocity = [gestureRecognizer velocityInView:self.view];
+
+        if(velocity.x < 0) {
+
+            [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
+            AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString:@""];
+            [synth speakUtterance:utterance];
+            [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
+
+            currentJoke++;
+            jokeEngineState = JokeEngineStateSetup;
+            [self saySetup];
+
+
+        }
+        else
+        {
+            //swiped right
+        }
+    }
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self toggleLabels];
+- (void)tapped:(UITapGestureRecognizer *)gestureRecognizer {
+
+    if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
+        [self toggleLabels];
+    }
 }
 
 #pragma mark -
 #pragma mark UI Updates
 
 - (void)toggleLabels {
-    if (labelView.alpha == 0) {
-        labelView.alpha = 0.7;
-    }
-    else labelView.alpha = 0;
-}
-
-
-#pragma mark -
-#pragma mark Joke Engine
-
-- (void)changeState {
-    if (isRapidFire) {
-        isRapidFire = NO;
+    if (jokeTellerImageView.alpha == 1) {
+        jokeTellerImageView.alpha = 0.7;
+        labelView.alpha = 1;
     }
     else {
-        isRapidFire = YES;
-        [self sayNextLine];
+        labelView.alpha = 0;
+        jokeTellerImageView.alpha = 1;
     }
 }
+
 
 - (void)fetchJokes {
 
@@ -161,7 +213,7 @@
                 }
                 if (isRapidFire) {
                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                        [self sayNextLine];
+                        [self saySetup];
                     }];
 
                 }
@@ -174,44 +226,59 @@
 
 }
 
-- (void)sayNextLine {
-
-    if ([synth isSpeaking]) return;
-
-    static BOOL askedQuestion;
+- (void)saySetup {
 
     Joke *joke = jokeArray[currentJoke];
 
     NSString *line;
 
-    if (!askedQuestion) {
-        line = [joke question];
-        [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyAsks.jpg"]];
-        [jokeLabel setText:line];
-    }
-    else {
-        line = [joke answer];
-        [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyTells.jpg"]];
-        [punchlineLabel setText:line];
+    line = [joke question];
+    [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyAsks.jpg"]];
+    [jokeLabel setText:line];
 
-        if (currentJoke == jokeArray.count) {
-            line = @"OK, I'm done";
-        }
-        currentJoke++;
-    }
+
+    AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:line];
+    [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:@"en-AU"]];
+    utterance.pitchMultiplier = 0.4;
+    utterance.rate = 0.2;
+
+    [synth speakUtterance:utterance];
+}
+
+- (void)sayPunchline {
+
+    Joke *joke = jokeArray[currentJoke];
+
+    NSString *line;
+
+    line = [joke answer];
+    [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyTells.jpg"]];
+    [punchlineLabel setText:line];
+
 
     AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:line];
     [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:@"en-AU"]];
     utterance.pitchMultiplier = 0.3;
     utterance.rate = 0.1;
-
+    
     [synth speakUtterance:utterance];
-
-    askedQuestion = !askedQuestion;
 }
 
 - (void)laugh {
-    AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:@"Mwahahahaahahahahaha"];
+
+    NSString *laughterString;
+
+    int laughterType = arc4random()%1;
+
+    if (laughterType == 0) {
+        laughterString = @"Huehuehuehuehuehuehuehuehue";
+    }
+    else if (laughterType == 1) {
+        laughterString = @"Mwahahahaahahahahaha";
+    }
+
+
+    AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:laughterString];
 
     AVSpeechSynthesisVoice *randomVoice = [AVSpeechSynthesisVoice speechVoices][arc4random()%[AVSpeechSynthesisVoice speechVoices].count];
     [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:randomVoice.language]];
@@ -221,32 +288,32 @@
 
     [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyLaughs.jpg"]];
 
-    [jokeLabel setText:@"Mwahahahaahahahahaha"];
+
+    [jokeLabel setText:laughterString];
     [punchlineLabel setText:@" "];
+
 }
 
 - (void)speechSynthesizer:(AVSpeechSynthesizer *)synthesizer didFinishSpeechUtterance:(AVSpeechUtterance *)lastUtterance {
 
-    if (currentJoke == 0) {
-        if (isRapidFire) {
-            [self sayNextLine];
-        }
+    if (currentJoke >= jokeArray.count) {
         return;
     }
 
-    if (currentJoke == jokeArray.count) {
-        return;
+    if (jokeEngineState == JokeEngineStateSetup) {
+        jokeEngineState = JokeEngineStatePunchline;
+        [self sayPunchline];
     }
 
-    Joke *joke = jokeArray[currentJoke-1];
-    BOOL justFinishedTellingJoke = [lastUtterance.speechString isEqualToString:[joke answer]];
-    if (justFinishedTellingJoke) {
+    else if (jokeEngineState == JokeEngineStatePunchline) {
+        jokeEngineState = JokeEngineStateLaughing;
         [self laugh];
+        currentJoke++;
     }
-    else {
-        if (isRapidFire) {
-            [self sayNextLine];
-        }
+
+    else if (jokeEngineState == JokeEngineStateLaughing) {
+        jokeEngineState = JokeEngineStateSetup;
+        [self saySetup];
     }
 }
 
