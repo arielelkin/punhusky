@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B082D9A5195BD9D2009507CF /* Joke.m in Sources */ = {isa = PBXBuildFile; fileRef = B082D9A4195BD9D2009507CF /* Joke.m */; };
 		B0C2152819495EF1005AF301 /* rapidfire_off.png in Resources */ = {isa = PBXBuildFile; fileRef = B0C2152619495EF1005AF301 /* rapidfire_off.png */; };
 		B0C2152919495EF1005AF301 /* rapidfire_on.png in Resources */ = {isa = PBXBuildFile; fileRef = B0C2152719495EF1005AF301 /* rapidfire_on.png */; };
 		B0E56B6818EEFE7E002A8C89 /* HuskyAsks.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0E56B6518EEFE7E002A8C89 /* HuskyAsks.jpg */; };
@@ -38,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B082D9A3195BD9D2009507CF /* Joke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joke.h; sourceTree = "<group>"; };
+		B082D9A4195BD9D2009507CF /* Joke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joke.m; sourceTree = "<group>"; };
 		B0C2152619495EF1005AF301 /* rapidfire_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = rapidfire_off.png; path = Images/rapidfire_off.png; sourceTree = SOURCE_ROOT; };
 		B0C2152719495EF1005AF301 /* rapidfire_on.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = rapidfire_on.png; path = Images/rapidfire_on.png; sourceTree = SOURCE_ROOT; };
 		B0E56B6518EEFE7E002A8C89 /* HuskyAsks.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = HuskyAsks.jpg; path = Images/HuskyAsks.jpg; sourceTree = SOURCE_ROOT; };
@@ -137,6 +140,8 @@
 				E817F4D51886A69B004CB5A9 /* AppDelegate.m */,
 				E817F4DA1886A69B004CB5A9 /* ViewController.h */,
 				E817F4DB1886A69B004CB5A9 /* ViewController.m */,
+				B082D9A3195BD9D2009507CF /* Joke.h */,
+				B082D9A4195BD9D2009507CF /* Joke.m */,
 				E817F4DD1886A69B004CB5A9 /* Images.xcassets */,
 				E817F4CC1886A69B004CB5A9 /* Supporting Files */,
 			);
@@ -275,6 +280,7 @@
 			files = (
 				E817F4DC1886A69B004CB5A9 /* ViewController.m in Sources */,
 				E817F4D61886A69B004CB5A9 /* AppDelegate.m in Sources */,
+				B082D9A5195BD9D2009507CF /* Joke.m in Sources */,
 				E817F4D21886A69B004CB5A9 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

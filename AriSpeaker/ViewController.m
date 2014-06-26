@@ -7,31 +7,11 @@
 //
 
 #import "ViewController.h"
+#import "Joke.h"
 
 @import AVFoundation;
 
-@interface Joke : NSObject
-@property (readonly) NSString *question;
-@property (readonly) NSString *answer;
-+ (instancetype)jokeWithQuestion:(NSString *)question answer:(NSString *)answer;
-@end
-
-@interface Joke ()
-@property NSString *question;
-@property NSString *answer;
-@end
-
-@implementation Joke
-+ (instancetype)jokeWithQuestion:(NSString *)question answer:(NSString *)answer {
-    Joke *joke = [[self alloc] init];
-    [joke setQuestion:question];
-    [joke setAnswer:answer];
-    return joke;
-}
-@end
-
 @interface ViewController ()<AVSpeechSynthesizerDelegate>
-
 @end
 
 @implementation ViewController {
