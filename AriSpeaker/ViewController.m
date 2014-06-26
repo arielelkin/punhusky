@@ -14,16 +14,18 @@
 @interface ViewController ()<AVSpeechSynthesizerDelegate>
 @end
 
+
 @implementation ViewController {
     AVSpeechSynthesizer *synth;
-    NSMutableArray *posts;
+
+    NSURLSessionDataTask *jokeFetcher;
+
+    NSMutableArray *jokeArray;
     NSInteger currentJoke;
 
     UIImageView *jokeTellerImageView;
 
     BOOL isRapidFire;
-
-    UIButton *rapidFireButton;
 
     UIDynamicAnimator *animator;
 
@@ -32,12 +34,24 @@
     UILabel *punchlineLabel;
 }
 
-- (void)viewDidLoad
+- (void)viewWillAppear:(BOOL)animated
 {
-    [super viewDidLoad];
+    [super viewWillAppear:animated];
 
     synth = [AVSpeechSynthesizer new];
     [synth setDelegate:self];
+
+    [self buildUI];
+    [self fetchJokes];
+
+    isRapidFire = YES;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+}
+
+- (void)buildUI {
 
     jokeTellerImageView = [UIImageView new];
     [jokeTellerImageView setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -86,22 +100,11 @@
 
     NSArray *labelConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[jokeLabel]-[punchlineLabel]" options:0 metrics:nil views:viewsDicts];
     [labelView addConstraints:labelConstraintsV];
-
-    rapidFireButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rapidFireButton setImage:[UIImage imageNamed:@"rapidfire_on"] forState:UIControlStateNormal];
-    [rapidFireButton setContentMode:UIViewContentModeCenter];
-    [rapidFireButton addTarget:self action:@selector(changeState) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:rapidFireButton];
-    [rapidFireButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-
-    NSArray *buttonConstraintsH = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[rapidFireButton]|" options:0 metrics:nil views:@{@"rapidFireButton": rapidFireButton}];
-    [self.view addConstraints:buttonConstraintsH];
-
-    NSArray *buttonConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[rapidFireButton]|" options:0 metrics:nil views:@{@"rapidFireButton": rapidFireButton}];
-    [self.view addConstraints:buttonConstraintsV];
-
-    isRapidFire = YES;
 }
+
+
+#pragma mark -
+#pragma mark Touches
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [self toggleLabels];
@@ -111,6 +114,9 @@
     [self toggleLabels];
 }
 
+#pragma mark -
+#pragma mark UI Updates
+
 - (void)toggleLabels {
     if (labelView.alpha == 0) {
         labelView.alpha = 0.7;
@@ -118,43 +124,25 @@
     else labelView.alpha = 0;
 }
 
+
+#pragma mark -
+#pragma mark Joke Engine
+
 - (void)changeState {
     if (isRapidFire) {
         isRapidFire = NO;
-        [rapidFireButton setImage:[UIImage imageNamed:@"rapidfire_off"] forState:UIControlStateNormal];
-
-        [rapidFireButton.layer removeAllAnimations];
-
     }
     else {
         isRapidFire = YES;
-        [rapidFireButton setImage:[UIImage imageNamed:@"rapidfire_on"] forState:UIControlStateNormal];
-
-        [self animateRapidFire];
-
         [self sayNextLine];
     }
 }
 
-- (void)animateRapidFire {
-    [UIView animateWithDuration:0.1
-                          delay:0
-         usingSpringWithDamping:0.2
-          initialSpringVelocity:0
-                        options:UIViewAnimationOptionRepeat | UIViewAnimationOptionAllowUserInteraction
-                     animations:^{
-                         rapidFireButton.center = CGPointMake(rapidFireButton.center.x, rapidFireButton.center.y-5);
-                     }
-                     completion:nil
-     ];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+- (void)fetchJokes {
 
     NSURL *redditFrontPageJSON = [NSURL URLWithString:@"http://www.reddit.com/r/3amjokes.json"];
 
-    NSURLSessionDataTask *jokeFetcher = [[NSURLSession sharedSession] dataTaskWithURL:redditFrontPageJSON completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    jokeFetcher = [[NSURLSession sharedSession] dataTaskWithURL:redditFrontPageJSON completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
 
         if (error == nil) {
             NSError *jsonParsingError = nil;
@@ -162,14 +150,14 @@
 
             if (jsonParsingError == nil) {
 
-                posts = [NSMutableArray array];
+                jokeArray = [NSMutableArray array];
 
                 NSArray *redditJSONPosts = redditJSON[@"data"][@"children"];
 
                 for (NSDictionary *post in redditJSONPosts) {
                     NSString *question = post[@"data"][@"title"];
                     NSString *answer = post[@"data"][@"selftext"];
-                    [posts addObject:[Joke jokeWithQuestion:question answer:answer]];
+                    [jokeArray addObject:[Joke jokeWithQuestion:question answer:answer]];
                 }
                 if (isRapidFire) {
                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
@@ -184,8 +172,6 @@
 
     [jokeFetcher resume];
 
-    [self animateRapidFire];
-
 }
 
 - (void)sayNextLine {
@@ -194,7 +180,7 @@
 
     static BOOL askedQuestion;
 
-    Joke *joke = posts[currentJoke];
+    Joke *joke = jokeArray[currentJoke];
 
     NSString *line;
 
@@ -208,7 +194,7 @@
         [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyTells.jpg"]];
         [punchlineLabel setText:line];
 
-        if (currentJoke == posts.count) {
+        if (currentJoke == jokeArray.count) {
             line = @"OK, I'm done";
         }
         currentJoke++;
@@ -248,11 +234,11 @@
         return;
     }
 
-    if (currentJoke == posts.count) {
+    if (currentJoke == jokeArray.count) {
         return;
     }
 
-    Joke *joke = posts[currentJoke-1];
+    Joke *joke = jokeArray[currentJoke-1];
     BOOL justFinishedTellingJoke = [lastUtterance.speechString isEqualToString:[joke answer]];
     if (justFinishedTellingJoke) {
         [self laugh];
@@ -264,9 +250,23 @@
     }
 }
 
+#pragma mark -
+#pragma mark Orientation
+
 - (BOOL)prefersStatusBarHidden
 {
     return YES;
+}
+
+#pragma mark -
+#pragma mark View disappears
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
+    if (jokeFetcher.state == NSURLSessionTaskStateRunning || jokeFetcher.state == NSURLSessionTaskStateSuspended) {
+        [jokeFetcher cancel];
+    }
 }
 
 @end
