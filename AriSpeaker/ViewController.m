@@ -51,11 +51,13 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
     [synth setDelegate:self];
 
     [self buildUI];
-    [self fetchJokes];
+    isRapidFire = YES;
+//    [self fetchJokes];
+    [self fetchTestJokes];
 
     jokeEngineState = JokeEngineStateSetup;
 
-    isRapidFire = YES;
+
 }
 
 
@@ -188,7 +190,6 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
         jokeTellerImageView.alpha = 1;
     }
 }
-
 
 - (void)fetchJokes {
 
@@ -334,6 +335,37 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
     if (jokeFetcher.state == NSURLSessionTaskStateRunning || jokeFetcher.state == NSURLSessionTaskStateSuspended) {
         [jokeFetcher cancel];
     }
+}
+
+#pragma mark -
+#pragma mark Offline Tests
+
+- (void)fetchTestJokes {
+
+    NSData *localJSONData = [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test_jokes" withExtension:@"json"]];
+
+    NSError *jsonParsingError = nil;
+    NSDictionary *redditJSON = (NSDictionary *)[NSJSONSerialization JSONObjectWithData:localJSONData options:kNilOptions error:&jsonParsingError];
+
+    if (jsonParsingError == nil) {
+
+        jokeArray = [NSMutableArray array];
+
+        NSArray *redditJSONPosts = redditJSON[@"data"][@"children"];
+
+        for (NSDictionary *post in redditJSONPosts) {
+            NSString *question = post[@"data"][@"title"];
+            NSString *answer = post[@"data"][@"selftext"];
+            [jokeArray addObject:[Joke jokeWithQuestion:question answer:answer]];
+        }
+        if (isRapidFire) {
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                [self saySetup];
+            }];
+
+        }
+    }
+    else NSLog(@"JSON parsing Error: %@", jsonParsingError);
 }
 
 @end
