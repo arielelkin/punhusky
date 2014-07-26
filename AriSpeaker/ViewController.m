@@ -193,7 +193,7 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
 
 - (void)fetchJokes {
 
-    NSURL *redditFrontPageJSON = [NSURL URLWithString:@"http://www.reddit.com/r/3amjokes.json"];
+    NSURL *redditFrontPageJSON = [NSURL URLWithString:@"http://www.reddit.com/r/3amjokes/.json?limit=100"];
 
     jokeFetcher = [[NSURLSession sharedSession] dataTaskWithURL:redditFrontPageJSON completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
 
