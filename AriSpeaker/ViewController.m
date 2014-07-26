@@ -116,10 +116,10 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
 
     CGFloat xTranslation = [gestureRecognizer translationInView:self.view].x;
 
-    jokeTellerImageView.transform = CGAffineTransformRotate(jokeTellerImageView.transform, M_PI/(xTranslation-10));
+    jokeTellerImageView.transform = CGAffineTransformRotate(jokeTellerImageView.transform, xTranslation/4000);
 
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
-        [UIView animateWithDuration:((double)(20 + arc4random()%60)/100.0)
+        [UIView animateWithDuration:1
                               delay:0
              usingSpringWithDamping:0.2
               initialSpringVelocity:0
@@ -151,6 +151,7 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
         CGPoint velocity = [gestureRecognizer velocityInView:self.view];
 
         if(velocity.x < 0) {
+            //User swiped left, gesture did end
 
             [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
             AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString:@""];
@@ -160,7 +161,6 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
             currentJoke++;
             jokeEngineState = JokeEngineStateSetup;
             [self saySetup];
-
 
         }
         else
@@ -269,7 +269,7 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
 
     NSString *laughterString;
 
-    int laughterType = arc4random()%1;
+    int laughterType = arc4random()%2;
 
     if (laughterType == 0) {
         laughterString = @"Huehuehuehuehuehuehuehuehue";
