@@ -9,6 +9,8 @@
 #import "AppDelegate.h"
 #import "ViewController.h"
 
+@import AVFoundation;
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -17,10 +19,26 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
 
+    [self ignoreMuteSwitch];
+
     ViewController *vc = [ViewController new];
     [self.window setRootViewController:vc];
     
     return YES;
+}
+
+- (void) ignoreMuteSwitch {
+
+    AVAudioSession *mySession = [AVAudioSession sharedInstance];
+
+    NSError *audioSessionError = nil;
+    [mySession setCategory: AVAudioSessionCategoryPlayback
+                     error: &audioSessionError];
+
+    if (audioSessionError != nil) {
+        NSLog (@"Error setting audio session category.");
+        return;
+    }
 }
 
 @end
