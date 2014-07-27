@@ -61,17 +61,17 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 - (void)applicationDidBecomeActive {
 
     NSDate *dateJokesLastFetched = [[NSUserDefaults standardUserDefaults] valueForKey:kDateJokesLastFetched];
-    
+
     BOOL noJokes = (jokeArray == nil);
     BOOL itsBeenMoreThan24HoursSinceWeFetchedJokes = [dateJokesLastFetched timeIntervalSinceNow] > (60 * 60 * 24);
     BOOL lastTimeWeFetchedJokesThereWasNoInternet = [((Joke *)jokeArray[2]).question isEqualToString:@"I need"];
 
-        if (noJokes ||
-            itsBeenMoreThan24HoursSinceWeFetchedJokes ||
-            lastTimeWeFetchedJokesThereWasNoInternet)
-        {
-            [self fetchJokes];
-        }
+    if (noJokes ||
+        itsBeenMoreThan24HoursSinceWeFetchedJokes ||
+        lastTimeWeFetchedJokesThereWasNoInternet)
+    {
+        [self fetchJokes];
+    }
 }
 
 
@@ -311,7 +311,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:@"en-AU"]];
     utterance.pitchMultiplier = 0.3;
     utterance.rate = 0.1;
-    
+
     [synth speakUtterance:utterance];
 }
 
@@ -402,7 +402,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
         jokeArray = [NSMutableArray array];
 
         NSArray *redditJSONPosts = redditJSON[@"data"][@"children"];
-
+        
         for (NSDictionary *post in redditJSONPosts) {
             NSString *question = post[@"data"][@"title"];
             NSString *answer = post[@"data"][@"selftext"];
@@ -412,7 +412,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
             [[NSOperationQueue mainQueue] addOperationWithBlock:^{
                 [self saySetup];
             }];
-
+            
         }
     }
     else NSLog(@"JSON parsing Error: %@", jsonParsingError);
