@@ -249,8 +249,9 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                 for (int i = 0; i < 100; i++) {
                     [jokeArray addObject:[Joke jokeWithQuestion:@"I need" answer:@"Internet"]];
                 }
-
-                [self sayShouldConnectToInternet];
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    [self sayShouldConnectToInternet];
+                }];
             }
         }
     }];
@@ -333,7 +334,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     AVSpeechSynthesisVoice *randomVoice = [AVSpeechSynthesisVoice speechVoices][arc4random()%[AVSpeechSynthesisVoice speechVoices].count];
     [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:randomVoice.language]];
-    utterance.rate = 0.5;
+    utterance.rate = 0.3;
     utterance.pitchMultiplier = 0.3;
     [synth speakUtterance:utterance];
 
