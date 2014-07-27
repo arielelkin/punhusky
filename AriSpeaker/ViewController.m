@@ -21,6 +21,7 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
 @interface ViewController ()<AVSpeechSynthesizerDelegate>
 @end
 
+NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
 @implementation ViewController {
     AVSpeechSynthesizer *synth;
@@ -52,12 +53,25 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
 
     [self buildUI];
     isRapidFire = YES;
-//    [self fetchJokes];
-    [self fetchTestJokes];
 
-    jokeEngineState = JokeEngineStateSetup;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
 
+}
 
+- (void)applicationDidBecomeActive {
+
+    NSDate *dateJokesLastFetched = [[NSUserDefaults standardUserDefaults] valueForKey:kDateJokesLastFetched];
+    
+    BOOL noJokes = (jokeArray == nil);
+    BOOL itsBeenMoreThan24HoursSinceWeFetchedJokes = [dateJokesLastFetched timeIntervalSinceNow] > (60 * 60 * 24);
+    BOOL lastTimeWeFetchedJokesThereWasNoInternet = [((Joke *)jokeArray[2]).question isEqualToString:@"I need"];
+
+        if (noJokes ||
+            itsBeenMoreThan24HoursSinceWeFetchedJokes ||
+            lastTimeWeFetchedJokesThereWasNoInternet)
+        {
+            [self fetchJokes];
+        }
 }
 
 
@@ -212,18 +226,54 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
                     NSString *answer = post[@"data"][@"selftext"];
                     [jokeArray addObject:[Joke jokeWithQuestion:question answer:answer]];
                 }
+
+                [[NSUserDefaults standardUserDefaults] setValue:[NSDate date] forKey:kDateJokesLastFetched];
+                [[NSUserDefaults standardUserDefaults] synchronize];
+
                 if (isRapidFire) {
                     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                        [self saySetup];
-                    }];
 
+                        jokeEngineState = JokeEngineStateSetup;
+                        [self saySetup];
+
+                    }];
                 }
             }
             else NSLog(@"JSON parsing Error: %@", jsonParsingError);
         }
+        else {
+            if ([error.domain isEqualToString:NSURLErrorDomain]) {
+
+                jokeArray = [NSMutableArray array];
+
+                for (int i = 0; i < 100; i++) {
+                    [jokeArray addObject:[Joke jokeWithQuestion:@"I need" answer:@"Internet"]];
+                }
+
+                [self sayShouldConnectToInternet];
+            }
+        }
     }];
 
     [jokeFetcher resume];
+
+}
+
+- (void)sayShouldConnectToInternet {
+
+    NSString *line = @"Hi. Sorry, but I need internet. Please connect and open the app again!";
+
+    [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyAsks.jpg"]];
+    [jokeLabel setText:line];
+
+    jokeEngineState = JokeEngineStatePunchline;
+
+    AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:line];
+    [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:@"en-AU"]];
+    utterance.pitchMultiplier = 0.2;
+    utterance.rate = 0.2;
+
+    [synth speakUtterance:utterance];
 
 }
 
