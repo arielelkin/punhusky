@@ -19,6 +19,8 @@
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
 
+    [[UIApplication sharedApplication] setIdleTimerDisabled:YES];
+
     [self ignoreMuteSwitch];
 
     ViewController *vc = [ViewController new];
