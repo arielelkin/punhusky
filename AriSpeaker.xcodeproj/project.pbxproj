@@ -10,6 +10,7 @@
 		B082D9A5195BD9D2009507CF /* Joke.m in Sources */ = {isa = PBXBuildFile; fileRef = B082D9A4195BD9D2009507CF /* Joke.m */; };
 		B082D9AA195C0964009507CF /* test_jokes.json in Resources */ = {isa = PBXBuildFile; fileRef = B082D9A9195C0964009507CF /* test_jokes.json */; };
 		B082D9AB195C0964009507CF /* test_jokes.json in Resources */ = {isa = PBXBuildFile; fileRef = B082D9A9195C0964009507CF /* test_jokes.json */; };
+		B0E2251E1984A32F00FD1823 /* curtain.png in Resources */ = {isa = PBXBuildFile; fileRef = B0E2251D1984A32F00FD1823 /* curtain.png */; };
 		B0E56B6818EEFE7E002A8C89 /* HuskyAsks.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0E56B6518EEFE7E002A8C89 /* HuskyAsks.jpg */; };
 		B0E56B6918EEFE7E002A8C89 /* HuskyLaughs.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0E56B6618EEFE7E002A8C89 /* HuskyLaughs.jpg */; };
 		B0E56B6A18EEFE7E002A8C89 /* HuskyTells.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0E56B6718EEFE7E002A8C89 /* HuskyTells.jpg */; };
@@ -42,6 +43,7 @@
 		B082D9A3195BD9D2009507CF /* Joke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joke.h; sourceTree = "<group>"; };
 		B082D9A4195BD9D2009507CF /* Joke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joke.m; sourceTree = "<group>"; };
 		B082D9A9195C0964009507CF /* test_jokes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test_jokes.json; sourceTree = "<group>"; };
+		B0E2251D1984A32F00FD1823 /* curtain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = curtain.png; path = Images/curtain.png; sourceTree = SOURCE_ROOT; };
 		B0E56B6518EEFE7E002A8C89 /* HuskyAsks.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = HuskyAsks.jpg; path = Images/HuskyAsks.jpg; sourceTree = SOURCE_ROOT; };
 		B0E56B6618EEFE7E002A8C89 /* HuskyLaughs.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = HuskyLaughs.jpg; path = Images/HuskyLaughs.jpg; sourceTree = SOURCE_ROOT; };
 		B0E56B6718EEFE7E002A8C89 /* HuskyTells.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = HuskyTells.jpg; path = Images/HuskyTells.jpg; sourceTree = SOURCE_ROOT; };
@@ -92,6 +94,7 @@
 		B0E56B6B18EEFE82002A8C89 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				B0E2251D1984A32F00FD1823 /* curtain.png */,
 				B0E56B6518EEFE7E002A8C89 /* HuskyAsks.jpg */,
 				B0E56B6618EEFE7E002A8C89 /* HuskyLaughs.jpg */,
 				B0E56B6718EEFE7E002A8C89 /* HuskyTells.jpg */,
@@ -256,6 +259,7 @@
 				B082D9AA195C0964009507CF /* test_jokes.json in Resources */,
 				E817F4D01886A69B004CB5A9 /* InfoPlist.strings in Resources */,
 				B0E56B6818EEFE7E002A8C89 /* HuskyAsks.jpg in Resources */,
+				B0E2251E1984A32F00FD1823 /* curtain.png in Resources */,
 				B0E56B6A18EEFE7E002A8C89 /* HuskyTells.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

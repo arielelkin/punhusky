@@ -41,8 +41,12 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     UILabel *jokeLabel;
     UILabel *punchlineLabel;
 
+    UIImageView *curtainImageView;
+    NSMutableArray *curtainConstraints;
+
     JokeEngineState jokeEngineState;
 }
+
 
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -52,10 +56,65 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     [synth setDelegate:self];
 
     [self buildUI];
+    [self addCurtain];
+
     isRapidFire = YES;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
 
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    [self removeCurtain];
+}
+
+- (void)addCurtain {
+    curtainImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"curtain"]];
+    curtainImageView.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:curtainImageView];
+
+    NSArray *curtainConstraintsH = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[curtain]" options:0 metrics:nil views:@{@"curtain": curtainImageView}];
+    NSArray *curtainConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[curtain]|" options:0 metrics:nil views:@{@"curtain": curtainImageView}];
+
+    curtainConstraints = [NSMutableArray array];
+    [curtainConstraints addObjectsFromArray:curtainConstraintsH];
+    [curtainConstraints addObjectsFromArray:curtainConstraintsV];
+
+    [self.view addConstraints:curtainConstraints];
+}
+
+- (void)removeCurtain {
+
+    [self.view removeConstraints:curtainConstraints];
+
+
+    NSArray *curtainConstraintsH = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[curtain]|" options:0 metrics:nil views:@{@"curtain": curtainImageView}];
+    [self.view addConstraints:curtainConstraintsH];
+
+    NSArray *curtainConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[curtain]|" options:0 metrics:nil views:@{@"curtain": curtainImageView}];
+    [self.view addConstraints:curtainConstraintsV];
+
+    [UIView animateWithDuration:4
+                          delay:0.2
+         usingSpringWithDamping:0.7
+          initialSpringVelocity:0
+                        options:0
+                     animations:^{
+                         [self.view layoutIfNeeded];
+                     }
+                     completion:^(BOOL finished) {
+                         [UIView animateWithDuration:2
+                                               delay:0
+                                             options:UIViewAnimationOptionCurveEaseInOut
+                                          animations:^{
+                                              curtainImageView.center = CGPointMake(curtainImageView.center.x-200, curtainImageView.center.y);
+                                          }
+                                          completion:^(BOOL finished) {
+                                              [curtainImageView removeFromSuperview];
+                                          }];
+                     }
+     ];
 }
 
 - (void)applicationDidBecomeActive {
@@ -401,7 +460,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     if (jsonParsingError == nil) {
 
         jokeArray = [NSMutableArray array];
-
+        
         NSArray *redditJSONPosts = redditJSON[@"data"][@"children"];
         
         for (NSDictionary *post in redditJSONPosts) {
