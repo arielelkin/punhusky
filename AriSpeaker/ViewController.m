@@ -145,12 +145,14 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     jokeLabel = [UILabel new];
     [jokeLabel setNumberOfLines:0];
+    [jokeLabel setPreferredMaxLayoutWidth:300];
     [jokeLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:30]];
     [jokeLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [labelView addSubview:jokeLabel];
 
     punchlineLabel = [UILabel new];
     [punchlineLabel setNumberOfLines:0];
+    [punchlineLabel setPreferredMaxLayoutWidth:300];
     [punchlineLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:30]];
     [punchlineLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [labelView addSubview:punchlineLabel];
