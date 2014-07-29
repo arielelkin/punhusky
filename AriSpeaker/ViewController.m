@@ -224,23 +224,24 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
         CGPoint velocity = [gestureRecognizer velocityInView:self.view];
 
+        [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
+        AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString:@""];
+        [synth speakUtterance:utterance];
+        [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
+
         if(velocity.x < 0) {
-            //User swiped left, gesture did end
-
-            [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
-            AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString:@""];
-            [synth speakUtterance:utterance];
-            [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
-
+            //swiped left
             currentJoke++;
-            jokeEngineState = JokeEngineStateSetup;
-            [self saySetup];
-
         }
-        else
-        {
+        else {
             //swiped right
+            if (currentJoke > 0) {
+                currentJoke--;
+            }
         }
+
+        jokeEngineState = JokeEngineStateSetup;
+        [self saySetup];
     }
 }
 
