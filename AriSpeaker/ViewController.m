@@ -88,32 +88,26 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     [self.view removeConstraints:curtainConstraints];
 
-
-    NSArray *curtainConstraintsH = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[curtain]|" options:0 metrics:nil views:@{@"curtain": curtainImageView}];
-    [self.view addConstraints:curtainConstraintsH];
+    NSArray *curtainConstraintsH = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[curtain]-300-|" options:0 metrics:nil views:@{@"curtain": curtainImageView}];
 
     NSArray *curtainConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[curtain]|" options:0 metrics:nil views:@{@"curtain": curtainImageView}];
-    [self.view addConstraints:curtainConstraintsV];
 
-    [UIView animateWithDuration:4
+    curtainConstraints = [NSMutableArray array];
+    [curtainConstraints addObjectsFromArray:curtainConstraintsH];
+    [curtainConstraints addObjectsFromArray:curtainConstraintsV];
+
+    [self.view addConstraints:curtainConstraints];
+
+    [UIView animateWithDuration:8
                           delay:0.2
          usingSpringWithDamping:0.7
           initialSpringVelocity:0
                         options:0
                      animations:^{
                          [self.view layoutIfNeeded];
+                         curtainImageView.transform = CGAffineTransformRotate(curtainImageView.transform, M_PI/10);
                      }
-                     completion:^(BOOL finished) {
-                         [UIView animateWithDuration:2
-                                               delay:0
-                                             options:UIViewAnimationOptionCurveEaseInOut
-                                          animations:^{
-                                              curtainImageView.center = CGPointMake(curtainImageView.center.x-200, curtainImageView.center.y);
-                                          }
-                                          completion:^(BOOL finished) {
-                                              [curtainImageView removeFromSuperview];
-                                          }];
-                     }
+                     completion:^(BOOL finished) {}
      ];
 }
 
