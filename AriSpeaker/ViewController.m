@@ -87,27 +87,30 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 - (void)removeCurtain {
 
     [self.view removeConstraints:curtainConstraints];
+    curtainImageView.translatesAutoresizingMaskIntoConstraints = YES;
 
-    NSArray *curtainConstraintsH = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[curtain]-300-|" options:0 metrics:nil views:@{@"curtain": curtainImageView}];
-
-    NSArray *curtainConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[curtain]|" options:0 metrics:nil views:@{@"curtain": curtainImageView}];
-
-    curtainConstraints = [NSMutableArray array];
-    [curtainConstraints addObjectsFromArray:curtainConstraintsH];
-    [curtainConstraints addObjectsFromArray:curtainConstraintsV];
-
-    [self.view addConstraints:curtainConstraints];
-
-    [UIView animateWithDuration:8
+    [UIView animateWithDuration:5
                           delay:0.2
          usingSpringWithDamping:0.7
           initialSpringVelocity:0
                         options:0
                      animations:^{
-                         [self.view layoutIfNeeded];
-                         curtainImageView.transform = CGAffineTransformRotate(curtainImageView.transform, M_PI/10);
+                         CGAffineTransform translate = CGAffineTransformMakeTranslation(-700, 0);
+                         CGAffineTransform rotate = CGAffineTransformMakeRotation(M_PI/15);
+                         CGAffineTransform transform = CGAffineTransformConcat(translate, rotate);
+
+                         curtainImageView.transform = transform;
+
                      }
-                     completion:^(BOOL finished) {}
+                     completion:^(BOOL finished) {
+
+                         [UIView animateWithDuration:1 animations:^{
+                             curtainImageView.center = CGPointMake(curtainImageView.center.x-150, curtainImageView.center.y);
+                         } completion:^(BOOL finished) {
+
+                                              [curtainImageView removeFromSuperview];
+                                          }];
+                     }
      ];
 }
 
@@ -145,14 +148,16 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     jokeLabel = [UILabel new];
     [jokeLabel setNumberOfLines:0];
-    [jokeLabel setPreferredMaxLayoutWidth:300];
+//    [jokeLabel setPreferredMaxLayoutWidth:[UIScreen mainScreen].bounds.size.width];
+//    [jokeLabel setLineBreakMode:NSLineBreakByWordWrapping];
     [jokeLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:30]];
     [jokeLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [labelView addSubview:jokeLabel];
 
     punchlineLabel = [UILabel new];
     [punchlineLabel setNumberOfLines:0];
-    [punchlineLabel setPreferredMaxLayoutWidth:300];
+//    [punchlineLabel setPreferredMaxLayoutWidth:[UIScreen mainScreen].bounds.size.width];
+//    [punchlineLabel setLineBreakMode:NSLineBreakByWordWrapping];
     [punchlineLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:30]];
     [punchlineLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [labelView addSubview:punchlineLabel];
@@ -162,7 +167,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     NSArray *labelViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|[labelView]|" options:0 metrics:nil views:viewsDicts];
     [self.view addConstraints:labelViewConstraints];
 
-    labelViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[labelView(200)]" options:0 metrics:nil views:viewsDicts];
+    labelViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|[labelView]|" options:0 metrics:nil views:viewsDicts];
     [self.view addConstraints:labelViewConstraints];
 
     NSArray *jokeLabelConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[jokeLabel]-|" options:0 metrics:nil views:viewsDicts];
