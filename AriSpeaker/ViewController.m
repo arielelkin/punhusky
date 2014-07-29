@@ -193,6 +193,11 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     jokeTellerImageView.transform = CGAffineTransformRotate(jokeTellerImageView.transform, xTranslation/4000);
 
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+
+        //temporarily set delegate to nil to avoid race condition
+        [synth setDelegate:nil];
+        [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
+
         [UIView animateWithDuration:1
                               delay:0
              usingSpringWithDamping:0.2
@@ -223,11 +228,6 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
         if (fabs(xTranslation) < 5) return;
 
         CGPoint velocity = [gestureRecognizer velocityInView:self.view];
-
-        [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
-        AVSpeechUtterance *utterance = [AVSpeechUtterance speechUtteranceWithString:@""];
-        [synth speakUtterance:utterance];
-        [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
 
         if(velocity.x < 0) {
             //swiped left
@@ -356,6 +356,9 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     utterance.rate = 0.2;
 
     [synth speakUtterance:utterance];
+
+    //should be declared here to avoid race conditions
+    [synth setDelegate:self];
 }
 
 - (void)sayPunchline {
