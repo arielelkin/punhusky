@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B0745776199312BB000BAC88 /* wooh.caf in Resources */ = {isa = PBXBuildFile; fileRef = B0745775199312BB000BAC88 /* wooh.caf */; };
+		B074577919931E72000BAC88 /* JokeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B074577819931E72000BAC88 /* JokeMenu.m */; };
 		B082D9A5195BD9D2009507CF /* Joke.m in Sources */ = {isa = PBXBuildFile; fileRef = B082D9A4195BD9D2009507CF /* Joke.m */; };
 		B082D9AA195C0964009507CF /* test_jokes.json in Resources */ = {isa = PBXBuildFile; fileRef = B082D9A9195C0964009507CF /* test_jokes.json */; };
 		B082D9AB195C0964009507CF /* test_jokes.json in Resources */ = {isa = PBXBuildFile; fileRef = B082D9A9195C0964009507CF /* test_jokes.json */; };
@@ -40,6 +42,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B0745775199312BB000BAC88 /* wooh.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = wooh.caf; path = Images/wooh.caf; sourceTree = SOURCE_ROOT; };
+		B074577719931E72000BAC88 /* JokeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JokeMenu.h; sourceTree = "<group>"; };
+		B074577819931E72000BAC88 /* JokeMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JokeMenu.m; sourceTree = "<group>"; };
 		B082D9A3195BD9D2009507CF /* Joke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joke.h; sourceTree = "<group>"; };
 		B082D9A4195BD9D2009507CF /* Joke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joke.m; sourceTree = "<group>"; };
 		B082D9A9195C0964009507CF /* test_jokes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test_jokes.json; sourceTree = "<group>"; };
@@ -141,6 +146,9 @@
 				E817F4D51886A69B004CB5A9 /* AppDelegate.m */,
 				E817F4DA1886A69B004CB5A9 /* ViewController.h */,
 				E817F4DB1886A69B004CB5A9 /* ViewController.m */,
+				B074577719931E72000BAC88 /* JokeMenu.h */,
+				B074577819931E72000BAC88 /* JokeMenu.m */,
+				B0745775199312BB000BAC88 /* wooh.caf */,
 				B082D9A3195BD9D2009507CF /* Joke.h */,
 				B082D9A4195BD9D2009507CF /* Joke.m */,
 				E817F4DD1886A69B004CB5A9 /* Images.xcassets */,
@@ -258,6 +266,7 @@
 				E817F4DE1886A69B004CB5A9 /* Images.xcassets in Resources */,
 				B082D9AA195C0964009507CF /* test_jokes.json in Resources */,
 				E817F4D01886A69B004CB5A9 /* InfoPlist.strings in Resources */,
+				B0745776199312BB000BAC88 /* wooh.caf in Resources */,
 				B0E56B6818EEFE7E002A8C89 /* HuskyAsks.jpg in Resources */,
 				B0E2251E1984A32F00FD1823 /* curtain.png in Resources */,
 				B0E56B6A18EEFE7E002A8C89 /* HuskyTells.jpg in Resources */,
@@ -281,6 +290,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E817F4DC1886A69B004CB5A9 /* ViewController.m in Sources */,
+				B074577919931E72000BAC88 /* JokeMenu.m in Sources */,
 				E817F4D61886A69B004CB5A9 /* AppDelegate.m in Sources */,
 				B082D9A5195BD9D2009507CF /* Joke.m in Sources */,
 				E817F4D21886A69B004CB5A9 /* main.m in Sources */,
@@ -400,12 +410,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AriSpeaker/AriSpeaker-Prefix.pch";
 				INFOPLIST_FILE = "AriSpeaker/AriSpeaker-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "093B6FEA-B1CC-4DA5-BD3F-DDC1EAA297DA";
+				PROVISIONING_PROFILE = "6F6EA96E-3A16-4D57-B354-BA5334FFE4B2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -415,12 +425,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AriSpeaker/AriSpeaker-Prefix.pch";
 				INFOPLIST_FILE = "AriSpeaker/AriSpeaker-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "093B6FEA-B1CC-4DA5-BD3F-DDC1EAA297DA";
+				PROVISIONING_PROFILE = "6F6EA96E-3A16-4D57-B354-BA5334FFE4B2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

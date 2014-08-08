@@ -8,6 +8,7 @@
 
 #import "ViewController.h"
 #import "Joke.h"
+#import "JokeMenu.h"
 
 @import AVFoundation;
 
@@ -45,6 +46,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     NSMutableArray *curtainConstraints;
 
     JokeEngineState jokeEngineState;
+
+    AVAudioPlayer *woohPlayer;
 }
 
 
@@ -58,7 +61,9 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     [self buildUI];
     [self addCurtain];
 
-    isRapidFire = YES;
+    NSURL *woohURL = [[NSBundle mainBundle] URLForResource:@"wooh" withExtension:@"caf"];
+    woohPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:woohURL error:nil];
+    [woohPlayer prepareToPlay];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidBecomeActive) name:UIApplicationDidBecomeActiveNotification object:nil];
 
@@ -117,6 +122,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 - (void)applicationDidBecomeActive {
 
     NSDate *dateJokesLastFetched = [[NSUserDefaults standardUserDefaults] valueForKey:kDateJokesLastFetched];
+    isRapidFire = [[NSUserDefaults standardUserDefaults] boolForKey:kShouldRapidFire];
 
     BOOL noJokes = (jokeArray == nil);
     BOOL itsBeenMoreThan24HoursSinceWeFetchedJokes = [dateJokesLastFetched timeIntervalSinceNow] > (60 * 60 * 24);
@@ -210,6 +216,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
          ];
 
         [punchlineLabel setText:@" "];
+
+        [woohPlayer play];
     }
 
     if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
@@ -224,8 +232,6 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                          }
                          completion:nil
          ];
-
-        if (fabs(xTranslation) < 5) return;
 
         CGPoint velocity = [gestureRecognizer velocityInView:self.view];
 
@@ -248,17 +254,31 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 - (void)tapped:(UITapGestureRecognizer *)gestureRecognizer {
 
     if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
-        [self toggleLabels];
+        [self toggleLabelsAndMenu];
     }
 }
 
 #pragma mark -
 #pragma mark UI Updates
 
-- (void)toggleLabels {
+- (void)toggleLabelsAndMenu {
     if (jokeTellerImageView.alpha == 1) {
         jokeTellerImageView.alpha = 0.7;
         labelView.alpha = 1;
+
+        static JokeMenu *menu;
+
+        if (menu.superview != nil) return;
+
+        else {
+            menu = [JokeMenu jokeMenu];
+            [self.view addSubview:menu];
+
+            menu.rapidFireModeChangedBlock = ^(BOOL newSetting) {
+                isRapidFire = newSetting;
+            };
+        }
+
     }
     else {
         labelView.alpha = 0;
@@ -291,14 +311,12 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                 [[NSUserDefaults standardUserDefaults] setValue:[NSDate date] forKey:kDateJokesLastFetched];
                 [[NSUserDefaults standardUserDefaults] synchronize];
 
-                if (isRapidFire) {
-                    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                [[NSOperationQueue mainQueue] addOperationWithBlock:^{
 
-                        jokeEngineState = JokeEngineStateSetup;
-                        [self saySetup];
+                    jokeEngineState = JokeEngineStateSetup;
+                    [self saySetup];
 
-                    }];
-                }
+                }];
             }
             else NSLog(@"JSON parsing Error: %@", jsonParsingError);
         }
@@ -398,8 +416,13 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     AVSpeechSynthesisVoice *randomVoice = [AVSpeechSynthesisVoice speechVoices][arc4random()%[AVSpeechSynthesisVoice speechVoices].count];
     [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:randomVoice.language]];
-    utterance.rate = 0.3;
-    utterance.pitchMultiplier = 0.3;
+
+    float laughterRate = (20 + (arc4random()%20)) / 100.0; //0.20 - 0.40
+    utterance.rate = laughterRate;
+
+    float laughterPitch = (20 + (arc4random()%180)) / 100.0; //0.20 - 0.40
+    utterance.pitchMultiplier = laughterPitch;
+
     [synth speakUtterance:utterance];
 
     [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyLaughs.jpg"]];
@@ -422,14 +445,21 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     }
 
     else if (jokeEngineState == JokeEngineStatePunchline) {
+
         jokeEngineState = JokeEngineStateLaughing;
         [self laugh];
-        currentJoke++;
+
+        if (isRapidFire) {
+            currentJoke++;
+        }
+
     }
 
     else if (jokeEngineState == JokeEngineStateLaughing) {
-        jokeEngineState = JokeEngineStateSetup;
-        [self saySetup];
+        if (isRapidFire) {
+            jokeEngineState = JokeEngineStateSetup;
+            [self saySetup];
+        }
     }
 }
 
@@ -473,12 +503,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
             NSString *answer = post[@"data"][@"selftext"];
             [jokeArray addObject:[Joke jokeWithQuestion:question answer:answer]];
         }
-        if (isRapidFire) {
-            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
-                [self saySetup];
-            }];
-            
-        }
+        [self saySetup];
+
     }
     else NSLog(@"JSON parsing Error: %@", jsonParsingError);
 }
