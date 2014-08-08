@@ -135,7 +135,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
         itsBeenMoreThan24HoursSinceWeFetchedJokes ||
         lastTimeWeFetchedJokesThereWasNoInternet)
     {
-        [self fetchTestJokes];
+        [self fetchJokes];
     }
 }
 
