@@ -48,6 +48,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     JokeEngineState jokeEngineState;
 
     AVAudioPlayer *woohPlayer;
+
+    NSString *currentCharacter;
 }
 
 
@@ -132,41 +134,43 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
         itsBeenMoreThan24HoursSinceWeFetchedJokes ||
         lastTimeWeFetchedJokesThereWasNoInternet)
     {
-        [self fetchJokes];
+        [self fetchTestJokes];
     }
 }
 
 
 - (void)buildUI {
 
+    self.view.backgroundColor = [UIColor blackColor];
+
     jokeTellerImageView = [UIImageView new];
     jokeTellerImageView.frame = self.view.frame;
-    [jokeTellerImageView setContentMode:UIViewContentModeScaleAspectFit];
+    [jokeTellerImageView setContentMode:UIViewContentModeScaleAspectFill];
     [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyAsks.jpg"]];
     [self.view addSubview:jokeTellerImageView];
 
     labelView = [UIView new];
-    [labelView setAlpha:0];
-    [labelView setBackgroundColor:[UIColor clearColor]];
-    labelView.layer.cornerRadius = 10;
+    [labelView setBackgroundColor:[UIColor colorWithWhite:0.3 alpha:0.4]];
     [labelView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.view addSubview:labelView];
 
     jokeLabel = [UILabel new];
     [jokeLabel setNumberOfLines:0];
-//    [jokeLabel setPreferredMaxLayoutWidth:[UIScreen mainScreen].bounds.size.width];
-//    [jokeLabel setLineBreakMode:NSLineBreakByWordWrapping];
-    [jokeLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:30]];
+    [jokeLabel setFont:[UIFont fontWithName:@"GillSans-Bold" size:30]];
     [jokeLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [labelView addSubview:jokeLabel];
 
     punchlineLabel = [UILabel new];
     [punchlineLabel setNumberOfLines:0];
-//    [punchlineLabel setPreferredMaxLayoutWidth:[UIScreen mainScreen].bounds.size.width];
-//    [punchlineLabel setLineBreakMode:NSLineBreakByWordWrapping];
-    [punchlineLabel setFont:[UIFont fontWithName:@"ArialRoundedMTBold" size:30]];
+    [punchlineLabel setFont:[UIFont fontWithName:@"GillSans-Bold" size:30]];
     [punchlineLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
     [labelView addSubview:punchlineLabel];
+
+    UIButton *menuButton = [UIButton buttonWithType:UIButtonTypeContactAdd];
+    menuButton.tintColor = [UIColor blackColor];
+    [menuButton addTarget:self action:@selector(toggleMenu) forControlEvents:UIControlEventTouchUpInside];
+    menuButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [labelView addSubview:menuButton];
 
     NSDictionary *viewsDicts = NSDictionaryOfVariableBindings(labelView, jokeLabel, punchlineLabel);
 
@@ -184,6 +188,13 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     NSArray *labelConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[jokeLabel]-[punchlineLabel]" options:0 metrics:nil views:viewsDicts];
     [labelView addConstraints:labelConstraintsV];
+
+    NSArray *menuButtonConstraintsH = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[menuButton]-|" options:0 metrics:nil views:@{@"menuButton": menuButton}];
+    [labelView addConstraints:menuButtonConstraintsH];
+
+    NSArray *menuButtonConstraintsV = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[menuButton]-|" options:0 metrics:nil views:@{@"menuButton": menuButton}];
+    [labelView addConstraints:menuButtonConstraintsV];
+
 
     UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapped:)];
     [self.view addGestureRecognizer:tapGesture];
@@ -246,6 +257,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
             }
         }
 
+        [self changeCharacter];
+
         jokeEngineState = JokeEngineStateSetup;
         [self saySetup];
     }
@@ -254,35 +267,35 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 - (void)tapped:(UITapGestureRecognizer *)gestureRecognizer {
 
     if (gestureRecognizer.state == UIGestureRecognizerStateEnded) {
-        [self toggleLabelsAndMenu];
+        [self toggleLabels];
     }
 }
 
 #pragma mark -
 #pragma mark UI Updates
 
-- (void)toggleLabelsAndMenu {
-    if (jokeTellerImageView.alpha == 1) {
-        jokeTellerImageView.alpha = 0.7;
+- (void)toggleLabels {
+    if (labelView.alpha == 0) {
         labelView.alpha = 1;
-
-        static JokeMenu *menu;
-
-        if (menu.superview != nil) return;
-
-        else {
-            menu = [JokeMenu jokeMenu];
-            [self.view addSubview:menu];
-
-            menu.rapidFireModeChangedBlock = ^(BOOL newSetting) {
-                isRapidFire = newSetting;
-            };
-        }
-
     }
     else {
         labelView.alpha = 0;
         jokeTellerImageView.alpha = 1;
+    }
+}
+
+- (void)toggleMenu {
+    static JokeMenu *menu;
+
+    if (menu.superview != nil) return;
+
+    else {
+        menu = [JokeMenu jokeMenu];
+        [self.view addSubview:menu];
+
+        menu.rapidFireModeChangedBlock = ^(BOOL newSetting) {
+            isRapidFire = newSetting;
+        };
     }
 }
 
@@ -314,6 +327,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
 
                     jokeEngineState = JokeEngineStateSetup;
+                    currentCharacter = @"teddy";
                     [self saySetup];
 
                 }];
@@ -343,7 +357,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     NSString *line = @"Hi. Sorry, but I need internet. Please connect and open the app again!";
 
-    [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyAsks.jpg"]];
+    [jokeTellerImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_laughs", currentCharacter]]];
     [jokeLabel setText:line];
 
     jokeEngineState = JokeEngineStatePunchline;
@@ -364,14 +378,33 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     NSString *line;
 
     line = [joke question];
-    [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyAsks.jpg"]];
+    [jokeTellerImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_asks.jpg", currentCharacter]]];
     [jokeLabel setText:line];
 
 
     AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:line];
     [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:@"en-AU"]];
-    utterance.pitchMultiplier = 0.4;
+
+    float preUtteranceDelay = (arc4random()%10) / 100.0; //0.0 - 0.1
+    [utterance setPreUtteranceDelay:preUtteranceDelay];
+
+    float setupPitch = (30 + (arc4random()%10)) / 100.0; //0.3 - 0.4
+    utterance.pitchMultiplier = setupPitch;
     utterance.rate = 0.2;
+
+    if ([currentCharacter isEqual:@"mona"]) {
+        utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"it-IT"];
+        utterance.pitchMultiplier = 1.2;
+        utterance.rate = 0.1;
+    }
+    else if([currentCharacter isEqual:@"teddy"]) {
+        utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"en-US"];
+        utterance.pitchMultiplier = 0.05;
+        utterance.rate = 0.1;
+    }
+
+
+
 
     [synth speakUtterance:utterance];
 
@@ -386,14 +419,28 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     NSString *line;
 
     line = [joke answer];
-    [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyTells.jpg"]];
+    [jokeTellerImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_tells.jpg", currentCharacter]]];
     [punchlineLabel setText:line];
 
 
     AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:line];
     [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:@"en-AU"]];
-    utterance.pitchMultiplier = 0.3;
+
+    //Punchline pitch:
+    float punchlinePitch = (30 + (arc4random()%10)) / 100.0; //0.3 - 0.4
+    utterance.pitchMultiplier = punchlinePitch;
+
     utterance.rate = 0.1;
+
+    if ([currentCharacter isEqual:@"mona"]) {
+        utterance.pitchMultiplier = 1.1;
+        utterance.rate = 0.2;
+        utterance.preUtteranceDelay = 0.2;
+        utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"it-IT"];
+    }
+    else if([currentCharacter isEqual:@"teddy"]) {
+        utterance.pitchMultiplier = 0.5;
+    }
 
     [synth speakUtterance:utterance];
 }
@@ -404,12 +451,20 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     int laughterType = arc4random()%2;
 
-    if (laughterType == 0) {
+    if ([currentCharacter isEqual:@"teddy"] || laughterType == 0) {
         laughterString = @"Huehuehuehuehuehuehuehuehue";
     }
     else if (laughterType == 1) {
         laughterString = @"Mwahahahaahahahahaha";
     }
+
+    //funny laughs:
+    //zh-HK
+    //pitch = 0.5;
+    //rate = 0.25;
+
+    //zh-TW
+
 
 
     AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:laughterString];
@@ -423,9 +478,18 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     float laughterPitch = (20 + (arc4random()%180)) / 100.0; //0.20 - 0.40
     utterance.pitchMultiplier = laughterPitch;
 
+    if ([currentCharacter isEqual:@"mona"]) {
+        utterance.pitchMultiplier = 0.9;
+        utterance.rate = 0.1;
+        utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"zh-HK"];
+    } else if([currentCharacter isEqual:@"teddy"]) {
+        utterance.pitchMultiplier = 0.05;
+        utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"de-DE"];
+    }
+
     [synth speakUtterance:utterance];
 
-    [jokeTellerImageView setImage:[UIImage imageNamed:@"HuskyLaughs.jpg"]];
+    [jokeTellerImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_laughs.jpg", currentCharacter]]];
 
 
     [jokeLabel setText:laughterString];
@@ -457,9 +521,27 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     else if (jokeEngineState == JokeEngineStateLaughing) {
         if (isRapidFire) {
+
+            [self changeCharacter];
+
             jokeEngineState = JokeEngineStateSetup;
             [self saySetup];
         }
+    }
+}
+
+-(void)changeCharacter {
+
+    int i = arc4random()%20;
+
+    if (i < 10) {
+        currentCharacter = @"husky";
+    }
+    else if (i > 9 && i <= 15) {
+        currentCharacter = @"teddy";
+    }
+    else {
+        currentCharacter = @"mona";
     }
 }
 
@@ -503,6 +585,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
             NSString *answer = post[@"data"][@"selftext"];
             [jokeArray addObject:[Joke jokeWithQuestion:question answer:answer]];
         }
+        currentCharacter = @"husky";
         [self saySetup];
 
     }
