@@ -11,6 +11,7 @@
 #import "JokeMenu.h"
 
 @import AVFoundation;
+@import Social;
 
 typedef NS_ENUM(NSUInteger, JokeEngineState){
     JokeEngineStateIdle,
@@ -295,6 +296,34 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
         menu.rapidFireModeChangedBlock = ^(BOOL newSetting) {
             isRapidFire = newSetting;
+        };
+
+        menu.shareOnFacebookBlock = ^{
+            if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
+
+                SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+
+                Joke *joke = jokeArray[currentJoke];
+                NSString *postText = [NSString stringWithFormat:@"%@\n%@", joke.question, joke.answer];
+
+                [vc setInitialText:postText];
+
+                [self presentViewController:vc animated:YES completion:nil];
+            }
+        };
+
+        menu.shareOnTwitterBlock = ^{
+            if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
+
+                SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+
+                Joke *joke = jokeArray[currentJoke];
+                NSString *postText = [NSString stringWithFormat:@"%@\n%@", joke.question, joke.answer];
+
+                [vc setInitialText:postText];
+
+                [self presentViewController:vc animated:YES completion:nil];
+            }
         };
     }
 }

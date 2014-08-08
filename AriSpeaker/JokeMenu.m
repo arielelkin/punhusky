@@ -10,7 +10,8 @@
 
 @implementation JokeMenu {
     UIButton *rapidFireButton;
-    UIButton *buttonTwo;
+    UIButton *shareJokeOnFacebookButton;
+    UIButton *shareOnTwitterButton;
     UIButton *closeMenuButton;
 
     UIDynamicAnimator *animator;
@@ -52,8 +53,14 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
 
     [[NSUserDefaults standardUserDefaults] setBool:!currentSetting forKey:kShouldRapidFire];
     [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
+- (void)shareOnFacebook {
+    self.shareOnFacebookBlock();
+}
 
+- (void)shareOnTwitter {
+    self.shareOnTwitterBlock();
 }
 
 #pragma mark -
@@ -63,7 +70,7 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
     self = [super initWithFrame:frame];
     if (self) {
 
-        rapidFireButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        rapidFireButton = [UIButton buttonWithType:UIButtonTypeSystem];
         rapidFireButton.backgroundColor = [UIColor redColor];
         [rapidFireButton addTarget:self action:@selector(toggleRapidFire) forControlEvents:UIControlEventTouchUpInside];
 
@@ -72,18 +79,26 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
         NSString *rapidFireButtonTitle = [NSString stringWithFormat:@"Rapid Fire Mode %@", currentSetting ? @"ON" : @"OFF"];
         [rapidFireButton setTitle:rapidFireButtonTitle forState:UIControlStateNormal];
 
-        buttonTwo = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        [buttonTwo setTitle:@"Share Joke" forState:UIControlStateNormal];
-        buttonTwo.backgroundColor = [UIColor greenColor];
+        shareJokeOnFacebookButton = [UIButton buttonWithType:UIButtonTypeSystem];
+        [shareJokeOnFacebookButton setTitle:@"Share Joke On Facebook" forState:UIControlStateNormal];
+        shareJokeOnFacebookButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        [shareJokeOnFacebookButton addTarget:self action:@selector(shareOnFacebook) forControlEvents:UIControlEventTouchUpInside];
+        shareJokeOnFacebookButton.backgroundColor = [UIColor colorWithRed:0.29 green:0.40 blue:0.63 alpha:0.9];
 
-        closeMenuButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+        shareOnTwitterButton = [UIButton buttonWithType:UIButtonTypeSystem];
+        [shareOnTwitterButton setTitle:@"Share Joke On Twitter" forState:UIControlStateNormal];
+        shareOnTwitterButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        shareOnTwitterButton.backgroundColor = [UIColor colorWithRed:0.33 green:0.67 blue:0.93 alpha:0.8];
+
+        closeMenuButton = [UIButton buttonWithType:UIButtonTypeSystem];
         [closeMenuButton setTitle:@"Close This Menu" forState:UIControlStateNormal];
         [closeMenuButton addTarget:self action:@selector(closeMenu) forControlEvents:UIControlEventTouchUpInside];
         closeMenuButton.backgroundColor = [UIColor orangeColor];
 
-        buttonArray = @[rapidFireButton, buttonTwo, closeMenuButton];
+        buttonArray = @[rapidFireButton, shareJokeOnFacebookButton, shareOnTwitterButton, closeMenuButton];
 
         for (UIButton *button in buttonArray) {
+            [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             [self addSubview:button];
         }
     }
@@ -101,7 +116,8 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
         [button sizeToFit];
     }
     rapidFireButton.frame = CGRectMake(0, 100, 150, 50);
-    buttonTwo.frame = CGRectMake(20+(arc4random()%50), 0, 100, 50);
+    shareJokeOnFacebookButton.frame = CGRectMake(20+(arc4random()%50), 0, 100, 50);
+    shareOnTwitterButton.frame = CGRectMake(140+(arc4random()%50), (arc4random()%50), 140, 50);
     closeMenuButton.frame = CGRectMake(70+(arc4random()%50), 150, 140, 50);
 
 
@@ -113,41 +129,27 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
         button.alpha = 0;
     }
 
-    [UIView animateKeyframesWithDuration:0.7
-                                   delay:0
-                                 options:UIViewKeyframeAnimationOptionCalculationModePaced
-                              animations:^{
-
-                                  [UIView addKeyframeWithRelativeStartTime:0 relativeDuration:0 animations:^{
-                                      rapidFireButton.transform = CGAffineTransformMakeScale(1, 1);
-                                      rapidFireButton.alpha = 1;
-                                      [self layoutIfNeeded];
-                                  }];
-                                  [UIView addKeyframeWithRelativeStartTime:0.5 relativeDuration:0 animations:^{
-                                      buttonTwo.transform = CGAffineTransformMakeScale(1, 1);
-                                      buttonTwo.alpha = 1;
-                                      [self layoutIfNeeded];
-                                  }];
-                                  [UIView addKeyframeWithRelativeStartTime:0.75 relativeDuration:0 animations:^{
-                                      closeMenuButton.transform = CGAffineTransformMakeScale(1, 1);
-                                      closeMenuButton.alpha = 1;
-                                      [self layoutIfNeeded];
-                                  }];
+    [UIView animateWithDuration:0.7
+                     animations:^{
+                         for (UIButton *button in buttonArray) {
+                             button.transform = CGAffineTransformMakeScale(1, 1);
+                             button.alpha = 1;
+                         }
 
 
-                              } completion:^(BOOL finished) {
-                                  [self addAnimator];
-                              }];
+                     } completion:^(BOOL finished) {
+                         [self addAnimator];
+                     }];
 }
 
 - (void)addAnimator {
     animator = [[UIDynamicAnimator alloc] initWithReferenceView:self];
 
-    UIGravityBehavior *gravityBeahvior = [[UIGravityBehavior alloc] initWithItems:@[rapidFireButton, buttonTwo, closeMenuButton]];
+    UIGravityBehavior *gravityBeahvior = [[UIGravityBehavior alloc] initWithItems:buttonArray];
     gravityBeahvior.magnitude = 1.4;
     [animator addBehavior:gravityBeahvior];
 
-    collisionBehavior = [[UICollisionBehavior alloc] initWithItems:@[rapidFireButton, buttonTwo, closeMenuButton]];
+    collisionBehavior = [[UICollisionBehavior alloc] initWithItems:buttonArray];
     collisionBehavior.translatesReferenceBoundsIntoBoundary = YES;
     [animator addBehavior:collisionBehavior];
 }
