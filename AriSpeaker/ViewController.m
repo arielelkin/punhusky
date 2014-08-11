@@ -347,7 +347,13 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                 for (NSDictionary *post in redditJSONPosts) {
                     NSString *question = post[@"data"][@"title"];
                     NSString *answer = post[@"data"][@"selftext"];
-                    [jokeArray addObject:[Joke jokeWithQuestion:question answer:answer]];
+
+                    BOOL goodToRead = (([answer rangeOfString:@"http://" options:NSCaseInsensitiveSearch].length == 0) &&
+                                       ((answer.length + question.length) < 170));
+
+                    if (goodToRead) {
+                        [jokeArray addObject:[Joke jokeWithQuestion:question answer:answer]];
+                    }
                 }
 
                 [[NSUserDefaults standardUserDefaults] setValue:[NSDate date] forKey:kDateJokesLastFetched];
