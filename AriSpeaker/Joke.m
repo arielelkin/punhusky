@@ -24,4 +24,8 @@
     return joke;
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@\n%@", self.question, self.answer];
+}
+
 @end
