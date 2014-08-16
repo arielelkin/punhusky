@@ -298,32 +298,16 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
             isRapidFire = newSetting;
         };
 
-        menu.shareOnFacebookBlock = ^{
-            if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook]) {
+        menu.shareOnSocialNetworkBlock = ^(NSString *serviceType){
 
-                SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+            SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:serviceType];
 
-                Joke *joke = jokeArray[currentJoke];
-                NSString *postText = [NSString stringWithFormat:@"%@\n%@", joke.question, joke.answer];
+            Joke *joke = jokeArray[currentJoke];
+            NSString *postText = [NSString stringWithFormat:@"%@\n\n%@", joke.question, joke.answer];
 
-                [vc setInitialText:postText];
+            [vc setInitialText:postText];
 
-                [self presentViewController:vc animated:YES completion:nil];
-            }
-        };
-
-        menu.shareOnTwitterBlock = ^{
-            if ([SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter]) {
-
-                SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-
-                Joke *joke = jokeArray[currentJoke];
-                NSString *postText = [NSString stringWithFormat:@"%@\n%@", joke.question, joke.answer];
-
-                [vc setInitialText:postText];
-
-                [self presentViewController:vc animated:YES completion:nil];
-            }
+            [self presentViewController:vc animated:YES completion:nil];
         };
     }
 }

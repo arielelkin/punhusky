@@ -15,6 +15,5 @@ NSString *const kShouldRapidFire;
 + (instancetype)jokeMenu;
 
 @property (nonatomic, copy) void (^rapidFireModeChangedBlock)(BOOL isRapidFire);
-@property (nonatomic, copy) void (^shareOnFacebookBlock)();
-@property (nonatomic, copy) void (^shareOnTwitterBlock)();
+@property (nonatomic, copy) void (^shareOnSocialNetworkBlock)(NSString *serviceType);
 @end
