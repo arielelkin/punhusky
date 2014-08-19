@@ -34,6 +34,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     NSInteger currentJoke;
 
     UIImageView *jokeTellerImageView;
+    UIView *whiteView;
 
     BOOL isRapidFire;
 
@@ -63,6 +64,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     [self buildUI];
     [self addCurtain];
+
+    labelView.alpha = 0;
 
     NSURL *woohURL = [[NSBundle mainBundle] URLForResource:@"wooh" withExtension:@"caf"];
     woohPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:woohURL error:nil];
@@ -144,6 +147,11 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     self.view.backgroundColor = [UIColor blackColor];
 
+    whiteView = [[UIView alloc] init];
+    whiteView.frame = self.view.frame;
+    whiteView.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:whiteView];
+
     jokeTellerImageView = [UIImageView new];
     jokeTellerImageView.frame = self.view.frame;
     [jokeTellerImageView setContentMode:UIViewContentModeScaleAspectFill];
@@ -151,7 +159,6 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     [self.view addSubview:jokeTellerImageView];
 
     labelView = [UIView new];
-    [labelView setBackgroundColor:[UIColor colorWithWhite:0.3 alpha:0.4]];
     [labelView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.view addSubview:labelView];
 
@@ -209,6 +216,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     CGFloat xTranslation = [gestureRecognizer translationInView:self.view].x;
 
     jokeTellerImageView.transform = CGAffineTransformRotate(jokeTellerImageView.transform, xTranslation/4000);
+    whiteView.transform = jokeTellerImageView.transform;
 
     if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
 
@@ -223,6 +231,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                             options:UIViewAnimationOptionCurveEaseInOut
                          animations:^{
                              jokeTellerImageView.transform = CGAffineTransformMakeScale(1.8, 1.6);
+                             whiteView.transform = jokeTellerImageView.transform;
                          }
                          completion:nil
          ];
@@ -241,6 +250,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                             options:UIViewAnimationOptionCurveEaseInOut
                          animations:^{
                              jokeTellerImageView.transform = CGAffineTransformIdentity;
+                             whiteView.transform = jokeTellerImageView.transform;
                          }
                          completion:nil
          ];
@@ -278,6 +288,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 - (void)toggleLabels {
     if (labelView.alpha == 0) {
         labelView.alpha = 1;
+        jokeTellerImageView.alpha = 0.7;
     }
     else {
         labelView.alpha = 0;
@@ -376,7 +387,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     NSString *line = @"Hi. Sorry, but I need internet. Please connect and open the app again!";
 
-    [jokeTellerImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_laughs", currentCharacter]]];
+    [jokeTellerImageView setImage:[UIImage imageNamed:[NSString stringWithFormat:@"%@_laughs.jpg", currentCharacter]]];
     [jokeLabel setText:line];
 
     jokeEngineState = JokeEngineStatePunchline;
