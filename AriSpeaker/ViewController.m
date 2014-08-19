@@ -59,8 +59,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 {
     [super viewWillAppear:animated];
 
+    //delegate will be set in
     synth = [AVSpeechSynthesizer new];
-    [synth setDelegate:self];
 
     [self buildUI];
     [self addCurtain];
@@ -218,11 +218,13 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     jokeTellerImageView.transform = CGAffineTransformRotate(jokeTellerImageView.transform, xTranslation/4000);
     whiteView.transform = jokeTellerImageView.transform;
 
-    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
+    //kill the synth to avoid race conditions:
+    [synth setDelegate:nil];
+    [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
+    synth = [AVSpeechSynthesizer new];
 
-        //temporarily set delegate to nil to avoid race condition
-        [synth setDelegate:nil];
-        [synth stopSpeakingAtBoundary:AVSpeechBoundaryImmediate];
+
+    if (gestureRecognizer.state == UIGestureRecognizerStateBegan) {
 
         [UIView animateWithDuration:1
                               delay:0
@@ -357,7 +359,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
 
                     jokeEngineState = JokeEngineStateSetup;
-                    currentCharacter = @"teddy";
+                    currentCharacter = @"husky";
                     [self saySetup];
 
                 }];
@@ -373,6 +375,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                     [jokeArray addObject:[Joke jokeWithQuestion:@"I need" answer:@"Internet"]];
                 }
                 [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                    currentCharacter = @"husky";
                     [self sayShouldConnectToInternet];
                 }];
             }
