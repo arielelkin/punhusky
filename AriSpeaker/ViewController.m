@@ -12,6 +12,7 @@
 
 @import AVFoundation;
 @import Social;
+@import MessageUI;
 
 typedef NS_ENUM(NSUInteger, JokeEngineState){
     JokeEngineStateIdle,
@@ -20,7 +21,7 @@ typedef NS_ENUM(NSUInteger, JokeEngineState){
     JokeEngineStateLaughing
 };
 
-@interface ViewController ()<AVSpeechSynthesizerDelegate>
+@interface ViewController ()<AVSpeechSynthesizerDelegate, MFMessageComposeViewControllerDelegate>
 @end
 
 NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
@@ -52,6 +53,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     AVAudioPlayer *woohPlayer;
 
     NSString *currentCharacter;
+    MFMessageComposeViewController *messageController;
 }
 
 
@@ -285,18 +287,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 }
 
 #pragma mark -
-#pragma mark UI Updates
-
-- (void)toggleLabels {
-    if (labelView.alpha == 0) {
-        labelView.alpha = 1;
-        jokeTellerImageView.alpha = 0.7;
-    }
-    else {
-        labelView.alpha = 0;
-        jokeTellerImageView.alpha = 1;
-    }
-}
+#pragma mark Menu
 
 - (void)toggleMenu {
     static JokeMenu *menu;
@@ -322,8 +313,57 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
             [self presentViewController:vc animated:YES completion:nil];
         };
+        menu.shareViaSMSBLock = ^{
+            messageController = [[MFMessageComposeViewController alloc] init];
+            messageController.messageComposeDelegate = self;
+
+            Joke *joke = jokeArray[currentJoke];
+            NSString *postText = [NSString stringWithFormat:@"%@\n\n%@", joke.question, joke.answer];
+
+            [messageController setBody:postText];
+
+            [self.view addSubview:messageController.view];
+        };
     }
 }
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult) result
+{
+    switch (result) {
+        case MessageComposeResultCancelled:
+            break;
+
+        case MessageComposeResultFailed:
+        {
+            UIAlertView *warningAlert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Failed to send SMS!" delegate:nil cancelButtonTitle:@"Crap." otherButtonTitles:nil];
+            [warningAlert show];
+            break;
+        }
+
+        case MessageComposeResultSent:
+            break;
+
+        default:
+            break;
+    }
+
+    [messageController.view removeFromSuperview];
+}
+
+#pragma mark -
+#pragma mark UI Updates
+
+- (void)toggleLabels {
+    if (labelView.alpha == 0) {
+        labelView.alpha = 1;
+        jokeTellerImageView.alpha = 0.7;
+    }
+    else {
+        labelView.alpha = 0;
+        jokeTellerImageView.alpha = 1;
+    }
+}
+
 
 - (void)fetchJokes {
 

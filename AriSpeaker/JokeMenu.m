@@ -9,11 +9,13 @@
 #import "JokeMenu.h"
 
 @import Social;
+@import MessageUI;
 
 @implementation JokeMenu {
     UIButton *rapidFireButton;
     UIButton *shareJokeOnFacebookButton;
     UIButton *shareJokeOnTwitterButton;
+    UIButton *shareJokeOnSMSButton;
     UIButton *closeMenuButton;
 
     UIDynamicAnimator *animator;
@@ -65,6 +67,10 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
     self.shareOnSocialNetworkBlock(SLServiceTypeTwitter);
 }
 
+- (void)shareViaSMS {
+    self.shareViaSMSBLock();
+}
+
 #pragma mark -
 #pragma mark Setup
 
@@ -81,6 +87,7 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
         BOOL currentSetting = [[NSUserDefaults standardUserDefaults] boolForKey:kShouldRapidFire];
         BOOL canShareOnFacebook = [SLComposeViewController isAvailableForServiceType:SLServiceTypeFacebook];
         BOOL canShareOnTwitter = [SLComposeViewController isAvailableForServiceType:SLServiceTypeTwitter];
+        BOOL canShareViaSMS = [MFMessageComposeViewController canSendText];
 
 
         NSString *rapidFireButtonTitle = [NSString stringWithFormat:@"Rapid Fire Mode %@", currentSetting ? @"ON" : @"OFF"];
@@ -109,6 +116,17 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
             [buttonArray addObject:shareJokeOnTwitterButton];
         }
 
+        if (canShareViaSMS) {
+            shareJokeOnSMSButton = [UIButton buttonWithType:UIButtonTypeSystem];
+            [shareJokeOnSMSButton setTitle:@"Share Joke via SMS" forState:UIControlStateNormal];
+            shareJokeOnSMSButton.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
+            shareJokeOnSMSButton.backgroundColor = [UIColor colorWithRed:0.84 green:0.67 blue:0.49 alpha:1];
+            [shareJokeOnSMSButton addTarget:self action:@selector(shareViaSMS) forControlEvents:UIControlEventTouchUpInside];
+
+            [buttonArray addObject:shareJokeOnSMSButton];
+
+        }
+
         closeMenuButton = [UIButton buttonWithType:UIButtonTypeSystem];
         [closeMenuButton setTitle:@"Close This Menu" forState:UIControlStateNormal];
         [closeMenuButton addTarget:self action:@selector(closeMenu) forControlEvents:UIControlEventTouchUpInside];
@@ -134,12 +152,12 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
 
     for (UIButton *button in buttonArray) {
         [self addSubview:button];
-        [button sizeToFit];
     }
     rapidFireButton.frame = CGRectMake(0, 100, 150, 50);
     shareJokeOnFacebookButton.frame = CGRectMake(20+(arc4random()%50), 0, 100, 50);
-    shareJokeOnTwitterButton.frame = CGRectMake(140+(arc4random()%50), (arc4random()%50), 140, 50);
+    shareJokeOnTwitterButton.frame = CGRectMake(150+(arc4random()%50), 40+(arc4random()%50), 120, 50);
     closeMenuButton.frame = CGRectMake(70+(arc4random()%50), 150, 140, 50);
+    shareJokeOnSMSButton.frame = CGRectMake(150+(arc4random()%50), 0, 70, 50);
 
 
     for (UIButton *button in buttonArray) {

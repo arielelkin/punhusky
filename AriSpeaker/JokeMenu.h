@@ -16,4 +16,6 @@ NSString *const kShouldRapidFire;
 
 @property (nonatomic, copy) void (^rapidFireModeChangedBlock)(BOOL isRapidFire);
 @property (nonatomic, copy) void (^shareOnSocialNetworkBlock)(NSString *serviceType);
+@property (nonatomic, copy) void (^shareViaSMSBLock)();
+
 @end
