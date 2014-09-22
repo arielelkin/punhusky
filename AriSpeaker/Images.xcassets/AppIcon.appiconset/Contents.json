@@ -1,22 +1,26 @@
 {
   "images" : [
     {
-      "size" : "29x29",
       "idiom" : "iphone",
-      "filename" : "husky_icon_58.png",
+      "size" : "29x29",
       "scale" : "2x"
     },
     {
-      "size" : "40x40",
       "idiom" : "iphone",
-      "filename" : "husky_icon_80.png",
+      "size" : "40x40",
       "scale" : "2x"
     },
     {
       "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "husky_icon_120-1.png",
+      "filename" : "icon@2x~ipad.png",
       "scale" : "2x"
+    },
+    {
+      "size" : "60x60",
+      "idiom" : "iphone",
+      "filename" : "icon@3x.png",
+      "scale" : "3x"
     }
   ],
   "info" : {

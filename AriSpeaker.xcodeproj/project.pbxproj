@@ -18,6 +18,7 @@
 		B082D9A5195BD9D2009507CF /* Joke.m in Sources */ = {isa = PBXBuildFile; fileRef = B082D9A4195BD9D2009507CF /* Joke.m */; };
 		B082D9AA195C0964009507CF /* test_jokes.json in Resources */ = {isa = PBXBuildFile; fileRef = B082D9A9195C0964009507CF /* test_jokes.json */; };
 		B082D9AB195C0964009507CF /* test_jokes.json in Resources */ = {isa = PBXBuildFile; fileRef = B082D9A9195C0964009507CF /* test_jokes.json */; };
+		B084BAB619BEACA5006C4735 /* info_button@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B084BAB519BEACA5006C4735 /* info_button@2x.png */; };
 		B0E2251E1984A32F00FD1823 /* curtain.png in Resources */ = {isa = PBXBuildFile; fileRef = B0E2251D1984A32F00FD1823 /* curtain.png */; };
 		B0E56B6818EEFE7E002A8C89 /* husky_asks@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0E56B6518EEFE7E002A8C89 /* husky_asks@2x.jpg */; };
 		B0E56B6918EEFE7E002A8C89 /* husky_laughs@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = B0E56B6618EEFE7E002A8C89 /* husky_laughs@2x.jpg */; };
@@ -60,6 +61,7 @@
 		B082D9A3195BD9D2009507CF /* Joke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Joke.h; sourceTree = "<group>"; };
 		B082D9A4195BD9D2009507CF /* Joke.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Joke.m; sourceTree = "<group>"; };
 		B082D9A9195C0964009507CF /* test_jokes.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test_jokes.json; sourceTree = "<group>"; };
+		B084BAB519BEACA5006C4735 /* info_button@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "info_button@2x.png"; path = "Images/info_button@2x.png"; sourceTree = SOURCE_ROOT; };
 		B0E2251D1984A32F00FD1823 /* curtain.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = curtain.png; path = Images/curtain.png; sourceTree = SOURCE_ROOT; };
 		B0E56B6518EEFE7E002A8C89 /* husky_asks@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "husky_asks@2x.jpg"; path = "Images/husky_asks@2x.jpg"; sourceTree = SOURCE_ROOT; };
 		B0E56B6618EEFE7E002A8C89 /* husky_laughs@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = "husky_laughs@2x.jpg"; path = "Images/husky_laughs@2x.jpg"; sourceTree = SOURCE_ROOT; };
@@ -111,6 +113,7 @@
 		B0E56B6B18EEFE82002A8C89 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				B084BAB519BEACA5006C4735 /* info_button@2x.png */,
 				B0E2251D1984A32F00FD1823 /* curtain.png */,
 				B0E56B6518EEFE7E002A8C89 /* husky_asks@2x.jpg */,
 				B0E56B6718EEFE7E002A8C89 /* husky_tells@2x.jpg */,
@@ -251,6 +254,9 @@
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Saffron Digital";
 				TargetAttributes = {
+					E817F4C11886A69B004CB5A9 = {
+						DevelopmentTeam = J5QV278N9U;
+					};
 					E817F4E21886A69B004CB5A9 = {
 						TestTargetID = E817F4C11886A69B004CB5A9;
 					};
@@ -283,6 +289,7 @@
 				B0E56B6918EEFE7E002A8C89 /* husky_laughs@2x.jpg in Resources */,
 				B07457D419947F13000BAC88 /* mona_asks@2x.jpg in Resources */,
 				B07457D819947F13000BAC88 /* teddy_asks@2x.jpg in Resources */,
+				B084BAB619BEACA5006C4735 /* info_button@2x.png in Resources */,
 				B07457D319947F13000BAC88 /* mona_tells@2x.jpg in Resources */,
 				E817F4DE1886A69B004CB5A9 /* Images.xcassets in Resources */,
 				B07457D719947F13000BAC88 /* teddy_tells@2x.jpg in Resources */,
@@ -434,12 +441,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AriSpeaker/AriSpeaker-Prefix.pch";
 				INFOPLIST_FILE = "AriSpeaker/AriSpeaker-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6F6EA96E-3A16-4D57-B354-BA5334FFE4B2";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -449,12 +457,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AriSpeaker/AriSpeaker-Prefix.pch";
 				INFOPLIST_FILE = "AriSpeaker/AriSpeaker-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "6F6EA96E-3A16-4D57-B354-BA5334FFE4B2";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
