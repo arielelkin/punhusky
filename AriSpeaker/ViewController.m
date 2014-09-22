@@ -259,6 +259,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                          completion:nil
          ];
 
+        if (jokeArray.count == 0) return;
+
         CGPoint velocity = [gestureRecognizer velocityInView:self.view];
 
         if(velocity.x < 0) {
@@ -512,6 +514,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
         utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"it-IT"];
     }
     else if([currentCharacter isEqual:@"teddy"]) {
+        utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"en-US"];
         utterance.pitchMultiplier = 0.5;
     }
 
@@ -524,20 +527,36 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     int laughterType = arc4random()%2;
 
-    if ([currentCharacter isEqual:@"teddy"] || laughterType == 0) {
+    if (laughterType == 0 || [currentCharacter isEqual:@"teddy"]) {
+        laughterString = @"Mwahahahahahahahaha";
+    }
+
+    else if (laughterType == 1) {
         laughterString = @"Huehuehuehuehuehuehuehuehue";
     }
-    else if (laughterType == 1) {
-        laughterString = @"Mwahahahaahahahahaha";
+
+    if ([currentCharacter isEqual:@"mona"]){
+        laughterString = @"waaaahaa... há... há... há... há... há... há... há... há... há... há... há...";
     }
+
 
     //funny laughs:
     //zh-HK
     //pitch = 0.5;
     //rate = 0.25;
 
+
+    //ru-RU
+    //zh-CN
+    //en-IE
+
     //zh-TW
 
+    //IF
+
+    //BAN:
+    //ro-RO
+    //ja-JP
 
 
     AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:laughterString];
@@ -551,12 +570,22 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     float laughterPitch = (20 + (arc4random()%180)) / 100.0; //0.20 - 0.40
     utterance.pitchMultiplier = laughterPitch;
 
-    if ([currentCharacter isEqual:@"mona"]) {
+    if ([currentCharacter isEqual:@"husky"]) {
+        utterance.pitchMultiplier = 0.1;
+        utterance.rate = 0.2;
+    }
+
+
+    else if ([currentCharacter isEqual:@"mona"]) {
         utterance.pitchMultiplier = 0.9;
-        utterance.rate = 0.1;
-        utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"zh-HK"];
-    } else if([currentCharacter isEqual:@"teddy"]) {
-        utterance.pitchMultiplier = 0.05;
+        utterance.rate = 0.3;
+        utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"it-IT"];
+    }
+
+    else if([currentCharacter isEqual:@"teddy"]) {
+        utterance.pitchMultiplier = 0.1;
+        utterance.rate = 0.2;
+        utterance.volume = 0.7;
         utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"de-DE"];
     }
 
@@ -585,15 +614,13 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
         jokeEngineState = JokeEngineStateLaughing;
         [self laugh];
-
-        if (isRapidFire) {
-            currentJoke++;
-        }
-
     }
 
     else if (jokeEngineState == JokeEngineStateLaughing) {
+
         if (isRapidFire) {
+
+            currentJoke++;
 
             [self changeCharacter];
 
@@ -615,6 +642,15 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     }
     else {
         currentCharacter = @"mona";
+    }
+
+    //mona can't pronounce "you" properly
+    Joke *nextJoke = jokeArray[currentJoke];
+    if ([currentCharacter isEqual:@"mona"]) {
+        if ([nextJoke.question rangeOfString:@"you"].length > 0 ||
+            [nextJoke.answer rangeOfString:@"you"].length > 0) {
+            [self changeCharacter];
+        }
     }
 }
 
