@@ -18,6 +18,8 @@
     UIButton *shareJokeOnSMSButton;
     UIButton *closeMenuButton;
 
+    UITextView *aboutTextView;
+
     UIDynamicAnimator *animator;
     UICollisionBehavior *collisionBehavior;
 
@@ -37,6 +39,16 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
 - (void)closeMenu {
 
     [animator removeBehavior:collisionBehavior];
+
+    [UIView animateWithDuration:0.3
+                     animations:^{
+                         aboutTextView.alpha = 0;
+                     }
+                     completion:^(BOOL finished) {
+                         [aboutTextView removeFromSuperview];
+                         aboutTextView.alpha = 1;
+                     }
+     ];
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
@@ -69,6 +81,103 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
 
 - (void)shareViaSMS {
     self.shareViaSMSBLock();
+}
+
+- (void)aboutButtonPressed {
+
+    if (!aboutTextView) {
+
+        aboutTextView = [[UITextView alloc] init];
+        aboutTextView.backgroundColor = [UIColor colorWithRed:105/255.0 green:95/255.0 blue:90/255.0 alpha:1];
+        aboutTextView.editable = NO;
+        aboutTextView.attributedText = [self aboutLabelString];
+        aboutTextView.translatesAutoresizingMaskIntoConstraints = NO;
+        [self.superview addSubview:aboutTextView];
+
+        NSArray *aboutViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[aboutViewTextField]-|" options:0 metrics:nil views:@{@"aboutViewTextField": aboutTextView}];
+        [self.superview addConstraints:aboutViewConstraints];
+
+        aboutViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[aboutViewTextField(200)]" options:0 metrics:nil views:@{@"aboutViewTextField": aboutTextView}];
+        [self.superview addConstraints:aboutViewConstraints];
+    }
+
+    [self.superview addSubview:aboutTextView];
+
+}
+
+- (NSAttributedString *)aboutLabelString {
+
+    NSDictionary *regularAttributes = @{
+                                 NSForegroundColorAttributeName: [UIColor blackColor],
+                                 NSKernAttributeName: @0.7,
+                                 NSFontAttributeName : [UIFont fontWithName:@"GillSans" size:14]
+                                 };
+    NSDictionary *boldAttributes =  @{
+                                      NSForegroundColorAttributeName: [UIColor blackColor],
+                                      NSKernAttributeName: @0.7,
+                                      NSFontAttributeName : [UIFont fontWithName:@"GillSans-Bold" size:14]
+                                      };
+
+    NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:@"" attributes:regularAttributes];
+
+
+    NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"This app offers three virtual comedians telling jokes.\n\n" attributes:regularAttributes];
+    [result appendAttributedString:string];
+
+    string = [[NSAttributedString alloc] initWithString:@"What kind of jokes are these?\n" attributes:boldAttributes];
+    [result appendAttributedString:string];
+    string = [[NSAttributedString alloc] initWithString:@"Puns, plays on words, far-fetched, stupid; in a good way. They're also known as jokes that are only funny at 3am.\n\n" attributes:regularAttributes];
+    [result appendAttributedString:string];
+
+    string = [[NSAttributedString alloc] initWithString:@"Aren't you ashamed?\n" attributes:boldAttributes];
+    [result appendAttributedString:string];
+    string = [[NSAttributedString alloc] initWithString:@"No.\n\n" attributes:regularAttributes];
+    [result appendAttributedString:string];
+
+    string = [[NSAttributedString alloc] initWithString:@"Where do the jokes come from?\n" attributes:boldAttributes];
+    [result appendAttributedString:string];
+    string = [[NSAttributedString alloc] initWithString:@"The jokes come straight from a webpage dedicated to these kinds of jokes: " attributes:regularAttributes];
+    [result appendAttributedString:string];
+    NSMutableAttributedString *lineWithLink = [[NSMutableAttributedString alloc] initWithString:@"www.reddit.com/r/3amjokes" attributes:regularAttributes];
+    [lineWithLink addAttribute:NSLinkAttributeName value:@"http://www.reddit.com/r/3amjokes" range:NSMakeRange(0, lineWithLink.length)];
+    [result appendAttributedString:lineWithLink];
+    string = [[NSAttributedString alloc] initWithString:@". All these jokes have been submitted and voted on by the page's users.\n\n" attributes:regularAttributes];
+    [result appendAttributedString:string];
+
+    string = [[NSAttributedString alloc] initWithString:@"Can I submit a joke?.\n" attributes:boldAttributes];
+    [result appendAttributedString:string];
+    lineWithLink = [[NSMutableAttributedString alloc] initWithString:@"Sure. Sign up or login to www.reddit.com, and submit it to www.reddit.com/r/3amjokes\n\n" attributes:regularAttributes];
+    [lineWithLink addAttribute:NSLinkAttributeName value:@"http://www.reddit.com/r/3amjokes" range:NSMakeRange(lineWithLink.length-27, 25)];
+    [result appendAttributedString:lineWithLink];
+
+    string = [[NSAttributedString alloc] initWithString:@"Can I share a joke on Facebook/Twitter?\n" attributes:boldAttributes];
+    [result appendAttributedString:string];
+    string = [[NSAttributedString alloc] initWithString:@"Sure. If these options are not available to you on the app's menu, open your device's Settings and log in to Facebook and/or Twitter.\n\n" attributes:regularAttributes];
+    [result appendAttributedString:string];
+
+
+    string = [[NSAttributedString alloc] initWithString:@"Acknowledgements\n" attributes:boldAttributes];
+    [result appendAttributedString:string];
+    string = [[NSAttributedString alloc] initWithString:@"The following people tested the early versions of this app, provided very useful suggestions, and encouraged me all along:\nAlejandro J.\nBrian H.\nGal M.\nJavier E.\nHari K.S.\nMonika K.\nMorel N.\nMary R.\n\nMuch love to the /r/3amjokes community.\n\n" attributes:regularAttributes];
+    [result appendAttributedString:string];
+
+    string = [[NSAttributedString alloc] initWithString:@"Ariel Elkin\n" attributes:boldAttributes];
+    [result appendAttributedString:string];
+    lineWithLink = [[NSMutableAttributedString alloc] initWithString:@"http://arielelkin.github.io\n" attributes:regularAttributes];
+    [lineWithLink addAttribute:NSLinkAttributeName value:@"http://arielelkin.github.io" range:NSMakeRange(0, lineWithLink.length)];
+    [result appendAttributedString:lineWithLink];
+    lineWithLink = [[NSMutableAttributedString alloc] initWithString:@"ariel@arivibes.com" attributes:regularAttributes];
+    [lineWithLink addAttribute:NSLinkAttributeName value:@"mailto:ariel@arivibes.com" range:NSMakeRange(0, lineWithLink.length)];
+    [result appendAttributedString:lineWithLink];
+
+    string = [[NSAttributedString alloc] initWithString:@" ← Drop me a line!\n" attributes:regularAttributes];
+    [result appendAttributedString:string];
+
+
+
+
+
+    return result;
 }
 
 #pragma mark -
@@ -131,8 +240,21 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
         [closeMenuButton setTitle:@"Close This Menu" forState:UIControlStateNormal];
         [closeMenuButton addTarget:self action:@selector(closeMenu) forControlEvents:UIControlEventTouchUpInside];
         closeMenuButton.backgroundColor = [UIColor orangeColor];
-
         [buttonArray addObject:closeMenuButton];
+
+
+        UIButton *aboutButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        UIImage *aboutButtonImage = [UIImage imageNamed:@"info_button"];
+        [aboutButton setImage:aboutButtonImage forState:UIControlStateNormal];
+        [aboutButton addTarget:self action:@selector(aboutButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        aboutButton.frame = CGRectMake(0, 0, aboutButtonImage.size.width, aboutButtonImage.size.height);
+        aboutButton.layer.cornerRadius = aboutButtonImage.size.width/4;
+        aboutButton.center = CGPointMake(aboutButtonImage.size.width, 20);
+
+        [self addSubview:aboutButton];
+
+        [buttonArray addObject:aboutButton];
+
 
 
         for (UIButton *button in buttonArray) {
@@ -150,11 +272,9 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
 
     if (self.superview == nil) return;
 
-    for (UIButton *button in buttonArray) {
-        [self addSubview:button];
-    }
+
     rapidFireButton.frame = CGRectMake(0, 100, 150, 50);
-    shareJokeOnFacebookButton.frame = CGRectMake(20+(arc4random()%50), 0, 100, 50);
+    shareJokeOnFacebookButton.frame = CGRectMake(60+(arc4random()%50), 0, 100, 50);
     shareJokeOnTwitterButton.frame = CGRectMake(150+(arc4random()%50), 40+(arc4random()%50), 120, 50);
     closeMenuButton.frame = CGRectMake(70+(arc4random()%50), 150, 140, 50);
     shareJokeOnSMSButton.frame = CGRectMake(150+(arc4random()%50), 0, 70, 50);
@@ -162,10 +282,14 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
 
     for (UIButton *button in buttonArray) {
         CGAffineTransform transform;
-        CGFloat scale = (arc4random()%3)/10.0;
+        CGFloat scale = 0.3;
         transform = CGAffineTransformScale(transform, scale, scale);
         button.transform = transform;
         button.alpha = 0;
+    }
+
+    for (UIButton *button in buttonArray) {
+        [self addSubview:button];
     }
 
     [UIView animateWithDuration:0.7
