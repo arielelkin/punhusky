@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "ViewController.h"
+#import "Flurry.h"
 
 @import AVFoundation;
 
@@ -25,7 +26,12 @@
 
     ViewController *vc = [ViewController new];
     [self.window setRootViewController:vc];
-    
+
+#if !DEBUG
+    [Flurry setCrashReportingEnabled:YES];
+    [Flurry startSession:@"VGXYJ2QPV4BDFBD6FJ4Z"];
+#endif
+
     return YES;
 }
 

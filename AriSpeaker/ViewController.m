@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "Joke.h"
 #import "JokeMenu.h"
+#import "Flurry.h"
 
 @import AVFoundation;
 @import Social;
@@ -307,6 +308,16 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
         menu.shareOnSocialNetworkBlock = ^(NSString *serviceType){
 
             SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:serviceType];
+            vc.completionHandler = ^(SLComposeViewControllerResult result){
+                if (result == SLComposeViewControllerResultDone) {
+                    if (serviceType == SLServiceTypeTwitter) {
+                        [Flurry logEvent:@"Tweet Sent Successfully"];
+                    }
+                    else if (serviceType == SLServiceTypeFacebook){
+                        [Flurry logEvent:@"FB Update Sent Successully"];
+                    }
+                }
+            };
 
             Joke *joke = jokeArray[currentJoke];
             NSString *postText = [NSString stringWithFormat:@"%@\n\n%@", joke.question, joke.answer];
@@ -343,7 +354,10 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
         }
 
         case MessageComposeResultSent:
+        {
+            [Flurry logEvent:@"SMS Sent Successfully"];
             break;
+        }
 
         default:
             break;
@@ -421,6 +435,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                     [self sayShouldConnectToInternet];
                 }];
             }
+            [Flurry logError:@"Fetch Joke Error" message:error.description error:error];
         }
     }];
 
@@ -607,17 +622,19 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     if (jokeEngineState == JokeEngineStateSetup) {
         jokeEngineState = JokeEngineStatePunchline;
+        [Flurry logEvent:@"Delivered Setup"];
         [self sayPunchline];
     }
 
     else if (jokeEngineState == JokeEngineStatePunchline) {
 
         jokeEngineState = JokeEngineStateLaughing;
+        [Flurry logEvent:@"Delivered Punchline"];
         [self laugh];
     }
 
     else if (jokeEngineState == JokeEngineStateLaughing) {
-
+        [Flurry logEvent:@"Delivered Laughter"];
         if (isRapidFire) {
 
             currentJoke++;
