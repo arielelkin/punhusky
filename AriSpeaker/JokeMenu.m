@@ -7,7 +7,6 @@
 //
 
 #import "JokeMenu.h"
-#import "Flurry.h"
 
 @import Social;
 @import MessageUI;
@@ -70,7 +69,6 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
 
     [[NSUserDefaults standardUserDefaults] setBool:!currentSetting forKey:kShouldRapidFire];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    [Flurry logEvent:@"Rapid Fire Mode Toggle" withParameters:@{@"Should Rapid Fire": @(currentSetting)}];
 }
 
 - (void)shareOnFacebook {
@@ -101,7 +99,6 @@ NSString *const kShouldRapidFire = @"kShouldRapidFire";
 
         aboutViewConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-20-[aboutViewTextField(200)]" options:0 metrics:nil views:@{@"aboutViewTextField": aboutTextView}];
         [self.superview addConstraints:aboutViewConstraints];
-        [Flurry logEvent:@"About View Displayed"];
     }
 
     [self.superview addSubview:aboutTextView];

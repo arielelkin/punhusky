@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B014592C19CFEC4F00262B6F /* libFlurry_5.3.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B014592B19CFEC4F00262B6F /* libFlurry_5.3.0.a */; };
 		B014592E19CFEC7F00262B6F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B014592D19CFEC7F00262B6F /* SystemConfiguration.framework */; };
 		B0745776199312BB000BAC88 /* wooh.caf in Resources */ = {isa = PBXBuildFile; fileRef = B0745775199312BB000BAC88 /* wooh.caf */; };
 		B074577919931E72000BAC88 /* JokeMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = B074577819931E72000BAC88 /* JokeMenu.m */; };
@@ -51,8 +50,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B014592A19CFEC4F00262B6F /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
-		B014592B19CFEC4F00262B6F /* libFlurry_5.3.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_5.3.0.a; sourceTree = "<group>"; };
 		B014592D19CFEC7F00262B6F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		B0745775199312BB000BAC88 /* wooh.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = wooh.caf; path = Images/wooh.caf; sourceTree = SOURCE_ROOT; };
 		B074577719931E72000BAC88 /* JokeMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JokeMenu.h; sourceTree = "<group>"; };
@@ -99,7 +96,6 @@
 				B014592E19CFEC7F00262B6F /* SystemConfiguration.framework in Frameworks */,
 				E817F4C81886A69B004CB5A9 /* CoreGraphics.framework in Frameworks */,
 				E817F4CA1886A69B004CB5A9 /* UIKit.framework in Frameworks */,
-				B014592C19CFEC4F00262B6F /* libFlurry_5.3.0.a in Frameworks */,
 				E817F4C61886A69B004CB5A9 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -117,15 +113,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B014592919CFEC4F00262B6F /* Flurry */ = {
-			isa = PBXGroup;
-			children = (
-				B014592A19CFEC4F00262B6F /* Flurry.h */,
-				B014592B19CFEC4F00262B6F /* libFlurry_5.3.0.a */,
-			);
-			path = Flurry;
-			sourceTree = "<group>";
-		};
 		B0E56B6B18EEFE82002A8C89 /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -149,7 +136,6 @@
 			children = (
 				B082D9A9195C0964009507CF /* test_jokes.json */,
 				E817F4CB1886A69B004CB5A9 /* AriSpeaker */,
-				B014592919CFEC4F00262B6F /* Flurry */,
 				E817F4EA1886A69B004CB5A9 /* AriSpeakerTests */,
 				E817F4C41886A69B004CB5A9 /* Frameworks */,
 				E817F4C31886A69B004CB5A9 /* Products */,
@@ -272,6 +258,9 @@
 				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = "Saffron Digital";
 				TargetAttributes = {
+					E817F4C11886A69B004CB5A9 = {
+						DevelopmentTeam = J5QV278N9U;
+					};
 					E817F4E21886A69B004CB5A9 = {
 						TestTargetID = E817F4C11886A69B004CB5A9;
 					};
@@ -489,15 +478,11 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = J5QV278N9U;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AriSpeaker/AriSpeaker-Prefix.pch";
 				INFOPLIST_FILE = "AriSpeaker/AriSpeaker-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Flurry",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = arispeaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -512,14 +497,11 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = J5QV278N9U;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AriSpeaker/AriSpeaker-Prefix.pch";
 				INFOPLIST_FILE = "AriSpeaker/AriSpeaker-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Flurry",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = arispeaker;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";

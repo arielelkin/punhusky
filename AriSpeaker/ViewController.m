@@ -9,7 +9,6 @@
 #import "ViewController.h"
 #import "Joke.h"
 #import "JokeMenu.h"
-#import "Flurry.h"
 
 @import AVFoundation;
 @import Social;
@@ -68,7 +67,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     [self buildUI];
     [self addCurtain];
 
-    labelView.alpha = 0;
+    labelView.alpha = 1;
+    jokeTellerImageView.alpha = 0.7;
 
     NSURL *woohURL = [[NSBundle mainBundle] URLForResource:@"wooh" withExtension:@"caf"];
     woohPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:woohURL error:nil];
@@ -131,7 +131,11 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 - (void)applicationDidBecomeActive {
 
     NSDate *dateJokesLastFetched = [[NSUserDefaults standardUserDefaults] valueForKey:kDateJokesLastFetched];
-    isRapidFire = [[NSUserDefaults standardUserDefaults] boolForKey:kShouldRapidFire];
+    if ([[NSUserDefaults standardUserDefaults] valueForKey:kShouldRapidFire] != nil) {
+        isRapidFire = [[NSUserDefaults standardUserDefaults] boolForKey:kShouldRapidFire];
+    } else {
+        isRapidFire = true;
+    }
 
     BOOL noJokes = (jokeArray == nil);
     BOOL itsBeenMoreThan24HoursSinceWeFetchedJokes = [dateJokesLastFetched timeIntervalSinceNow] > (60 * 60 * 24);
@@ -302,6 +306,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
         [self.view addSubview:menu];
 
         menu.rapidFireModeChangedBlock = ^(BOOL newSetting) {
+            [NSUserDefaults.standardUserDefaults setBool:newSetting forKey:kShouldRapidFire];
             isRapidFire = newSetting;
         };
 
@@ -311,10 +316,8 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
             vc.completionHandler = ^(SLComposeViewControllerResult result){
                 if (result == SLComposeViewControllerResultDone) {
                     if (serviceType == SLServiceTypeTwitter) {
-                        [Flurry logEvent:@"Tweet Sent Successfully"];
                     }
                     else if (serviceType == SLServiceTypeFacebook){
-                        [Flurry logEvent:@"FB Update Sent Successully"];
                     }
                 }
             };
@@ -355,7 +358,6 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
         case MessageComposeResultSent:
         {
-            [Flurry logEvent:@"SMS Sent Successfully"];
             break;
         }
 
@@ -435,7 +437,6 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
                     [self sayShouldConnectToInternet];
                 }];
             }
-            [Flurry logError:@"Fetch Joke Error" message:error.description error:error];
         }
     }];
 
@@ -455,7 +456,7 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     AVSpeechUtterance *utterance = [[AVSpeechUtterance alloc] initWithString:line];
     [utterance setVoice:[AVSpeechSynthesisVoice voiceWithLanguage:@"en-AU"]];
     utterance.pitchMultiplier = 0.2;
-    utterance.rate = 0.2;
+    utterance.rate = 0.3;
 
     [synth speakUtterance:utterance];
 
@@ -480,17 +481,17 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     float setupPitch = (30 + (arc4random()%10)) / 100.0; //0.3 - 0.4
     utterance.pitchMultiplier = setupPitch;
-    utterance.rate = 0.2;
+    utterance.rate = 0.4;
 
     if ([currentCharacter isEqual:@"mona"]) {
         utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"it-IT"];
         utterance.pitchMultiplier = 1.2;
-        utterance.rate = 0.1;
+        utterance.rate = 0.3;
     }
     else if([currentCharacter isEqual:@"teddy"]) {
         utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"en-US"];
         utterance.pitchMultiplier = 0.05;
-        utterance.rate = 0.1;
+        utterance.rate = 0.4;
     }
 
 
@@ -520,12 +521,12 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
     float punchlinePitch = (30 + (arc4random()%10)) / 100.0; //0.3 - 0.4
     utterance.pitchMultiplier = punchlinePitch;
 
-    utterance.rate = 0.1;
+    utterance.rate = 0.4;
 
     if ([currentCharacter isEqual:@"mona"]) {
         utterance.pitchMultiplier = 1.1;
-        utterance.rate = 0.2;
-        utterance.preUtteranceDelay = 0.2;
+        utterance.rate = 0.3;
+        utterance.preUtteranceDelay = 0.3;
         utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"it-IT"];
     }
     else if([currentCharacter isEqual:@"teddy"]) {
@@ -542,11 +543,11 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     int laughterType = arc4random()%2;
 
-    if (laughterType == 0 || [currentCharacter isEqual:@"teddy"]) {
-        laughterString = @"Mwahahahahahahahaha";
+    if (laughterType == 0) {
+        laughterString = @"hahahahahahahahaha";
     }
 
-    else if (laughterType == 1) {
+    else if (laughterType == 1 || [currentCharacter isEqual:@"teddy"]) {
         laughterString = @"Huehuehuehuehuehuehuehuehue";
     }
 
@@ -587,19 +588,19 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     if ([currentCharacter isEqual:@"husky"]) {
         utterance.pitchMultiplier = 0.1;
-        utterance.rate = 0.2;
+        utterance.rate = 0.3;
     }
 
 
     else if ([currentCharacter isEqual:@"mona"]) {
         utterance.pitchMultiplier = 0.9;
-        utterance.rate = 0.3;
+        utterance.rate = 0.4;
         utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"it-IT"];
     }
 
     else if([currentCharacter isEqual:@"teddy"]) {
         utterance.pitchMultiplier = 0.1;
-        utterance.rate = 0.2;
+        utterance.rate = 0.3;
         utterance.volume = 0.7;
         utterance.voice = [AVSpeechSynthesisVoice voiceWithLanguage:@"de-DE"];
     }
@@ -622,19 +623,16 @@ NSString *const kDateJokesLastFetched = @"kDateJokesLastFetched";
 
     if (jokeEngineState == JokeEngineStateSetup) {
         jokeEngineState = JokeEngineStatePunchline;
-        [Flurry logEvent:@"Delivered Setup"];
         [self sayPunchline];
     }
 
     else if (jokeEngineState == JokeEngineStatePunchline) {
 
         jokeEngineState = JokeEngineStateLaughing;
-        [Flurry logEvent:@"Delivered Punchline"];
         [self laugh];
     }
 
     else if (jokeEngineState == JokeEngineStateLaughing) {
-        [Flurry logEvent:@"Delivered Laughter"];
         if (isRapidFire) {
 
             currentJoke++;
