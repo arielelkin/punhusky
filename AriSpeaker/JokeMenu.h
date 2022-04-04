@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-NSString *const kShouldRapidFire;
+extern NSString *const kShouldRapidFire;
 
 @interface JokeMenu : UIView
 
